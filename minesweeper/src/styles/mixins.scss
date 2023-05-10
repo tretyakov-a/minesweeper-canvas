@@ -1,0 +1,28 @@
+@mixin anim($name, $delay: 0s, $fn: ease-out, $duration: 0.4s) {
+  animation: $name $duration $fn forwards;
+  animation-delay: $delay;
+}
+
+@mixin no-select() {
+  -webkit-tap-highlight-color: transparent;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@mixin vertical-align-center() {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@mixin horizontal-align-center() {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@mixin circle($radius) {
+  display: block;
+  content: "";
+  width: $radius;
+  height: $radius;
+  border-radius: 50%;
+}

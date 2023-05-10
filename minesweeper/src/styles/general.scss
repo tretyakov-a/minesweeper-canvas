@@ -1,0 +1,58 @@
+*,
+::before,
+::after,
+h1 {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  position: relative;
+  font-family: var(--main-font);
+  font-size: 16px;
+  color: var(--color-text-xl);
+  background-color: var(--color-bg-light);
+  display: flex;
+  flex-direction: column;
+
+  &.no-y-scroll {
+    overflow-y: hidden;
+  }
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: normal;
+}
+
+a {
+  text-decoration: none;
+  transition: 0.25s;
+  color: var(--color-text-xl);
+}
+
+img {
+  display: block;
+}
+
+ul {
+  list-style: none;
+}
+
+.rss-logo {
+  display: block;
+  width: var(--rss-logo-width);
+}
