@@ -2,6 +2,7 @@ import config from '../config';
 import gameState from '../game-state';
 import GameObject from './game-object';
 import Point from './point';
+import FlagsCounter from './ui/flags-counter';
 import Grid from './ui/grid';
 import Timer from './ui/timer';
 
@@ -23,7 +24,11 @@ export default class GameCanvas extends GameObject {
     this.ctx.textBaseline = 'middle';
     this.ctx.textAlign = 'center';
 
-    this.gameObjects = [new Grid(new Point(0, config.headerHeight)), new Timer(new Point(0, 0))];
+    this.gameObjects = [
+      new Grid(new Point(0, config.headerHeight)),
+      new Timer(new Point(0, 0)),
+      new FlagsCounter(new Point(this.canvas.width - config.counterWidth, 0)),
+    ];
     this.time = 0;
 
     this.canvas.addEventListener('mousedown', this.handleCanvasMouseDown);

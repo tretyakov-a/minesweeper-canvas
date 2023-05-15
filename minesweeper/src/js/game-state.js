@@ -25,16 +25,20 @@ class GameState extends EventTarget {
     this.cellsOpenedCounter = 0;
   }
 
-  set flagCounter(value) {}
+  set flagCounter(value) {
+    this._flagCounter = value;
+    this.dispatchEvent(
+      new CustomEvent('flagCounterChanged', { detail: { status: this._flagCounter } })
+    );
+  }
 
   get flagCounter() {
     return this._flagCounter;
   }
 
   set status(value) {
-    console.log('new GameState STATUS:', Object.entries(STATUS).find(([key, v]) => v === value)[0]);
-    this.dispatchEvent(new CustomEvent('statuschanged', { detail: { status: value } }));
     this._status = value;
+    this.dispatchEvent(new CustomEvent('statusChanged', { detail: { status: this._status } }));
   }
 
   get status() {

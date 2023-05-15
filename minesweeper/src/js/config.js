@@ -4,5 +4,6 @@ export default {
   borderWidth: 1,
   cellSize: 20,
   headerHeight: 40,
+  counterWidth: 60,
   difficulty: difficulty.easy,
 };

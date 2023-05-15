@@ -4,7 +4,7 @@ export default class GameObject extends EventTarget {
     this.offset = offset;
   }
 
-  // update() {}
+  update() {}
 
   draw(ctx, cb) {
     const { x, y } = this.offset;

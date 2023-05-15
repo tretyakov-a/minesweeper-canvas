@@ -1,3 +1,4 @@
+import config from '@src/js/config';
 import { STATUS } from '@src/js/constants';
 import gameState from '@src/js/game-state';
 import { renderNumber } from '@src/js/helpers';
@@ -7,10 +8,10 @@ export default class Timer extends GameObject {
   constructor(offset) {
     super(offset);
 
-    this.width = 60;
-    this.height = 40;
+    this.width = config.counterWidth;
+    this.height = config.headerHeight;
 
-    gameState.addEventListener('statuschanged', this.handleGameStatusChange);
+    gameState.addEventListener('statusChanged', this.handleGameStatusChange);
     this.reset();
   }
 
