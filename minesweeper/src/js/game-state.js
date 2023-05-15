@@ -1,7 +1,9 @@
 import { randomNumber } from './helpers';
-import Cell from './cell';
+import Cell from './canvas/ui/cell';
 import CellKey from './cell-key';
-import config from './config';
+import config from '@src/js/config';
+import Point from './canvas/point';
+import { STATUS } from '@src/js/constants';
 
 const checks = {
   topLeft: [-1, -1],
@@ -14,7 +16,7 @@ const checks = {
   bottomRight: [1, 1],
 };
 
-export default class GameState extends EventTarget {
+class GameState extends EventTarget {
   constructor(difficulty) {
     super();
     this.difficulty = difficulty;
@@ -24,10 +26,8 @@ export default class GameState extends EventTarget {
   }
 
   set status(value) {
-    console.log(
-      'new GameState.STATUS:',
-      Object.entries(GameState.STATUS).find(([key, v]) => v === value)[0]
-    );
+    console.log('new GameState STATUS:', Object.entries(STATUS).find(([key, v]) => v === value)[0]);
+    this.dispatchEvent(new CustomEvent('statuschanged', { detail: { status: value } }));
     this._status = value;
   }
 
@@ -85,10 +85,9 @@ export default class GameState extends EventTarget {
   };
 
   revealCell = (cellKey) => {
-    if (this.status === GameState.STATUS.START) {
-      this.status = GameState.STATUS.RUNNING;
+    if (this.status === STATUS.IDLE) {
+      this.status = STATUS.RUNNING;
       this.generateState(cellKey);
-      this.dispatchEvent(new CustomEvent('gamestart'));
     }
     this.openCell(cellKey);
   };
@@ -106,23 +105,23 @@ export default class GameState extends EventTarget {
   };
 
   handleCellOpen = (e) => {
-    if (this.status !== GameState.STATUS.RUNNING) {
+    if (this.status !== STATUS.RUNNING) {
       return;
     }
 
     this.cellsOpenedCounter += 1;
     if (this.cellsOpenedCounter === this.cellsToOpenAmount) {
-      this.status = GameState.STATUS.END;
+      this.status = STATUS.STOPPED;
       this.openAll();
       this.dispatchEvent(new CustomEvent('win'));
     }
   };
 
   handleLose = (e) => {
-    if (this.status !== GameState.STATUS.RUNNING) {
+    if (this.status !== STATUS.RUNNING) {
       return;
     }
-    this.status = GameState.STATUS.END;
+    this.status = STATUS.STOPPED;
     this.openAll();
     this.dispatchEvent(
       new CustomEvent('lose', {
@@ -162,7 +161,7 @@ export default class GameState extends EventTarget {
     if (newDifficulty !== undefined) {
       this.difficulty = newDifficulty;
     }
-    this.status = GameState.STATUS.START;
+    this.status = STATUS.IDLE;
     this.flagsCounter = this.difficulty.mines;
     this.cellsToOpenAmount = 0;
     this.cellsOpenedCounter = 0;
@@ -184,10 +183,10 @@ export default class GameState extends EventTarget {
     return wrongFlagsKeys;
   };
 
-  _revealEmptySpace = (startCellKey) => {
-    const reveal = (key, startCellKey) => {
+  _revealEmptySpace = (IDLECellKey) => {
+    const reveal = (key, IDLECellKey) => {
       const [dx, dy] = checks[key];
-      const newCellKey = new CellKey(startCellKey.x + dx, startCellKey.y + dy);
+      const newCellKey = new CellKey(IDLECellKey.x + dx, IDLECellKey.y + dy);
 
       const cell = this.getCell(newCellKey);
       if (!cell || cell.isOpened || cell.isFlagged) {
@@ -203,11 +202,11 @@ export default class GameState extends EventTarget {
       }
     };
 
-    Object.keys(checks).forEach((key) => reveal(key, startCellKey));
+    Object.keys(checks).forEach((key) => reveal(key, IDLECellKey));
   };
 
   _generateInitialMatrix = () => {
-    const { borderWidth, cellSize } = config;
+    const { borderWidth, headerHeight, cellSize } = config;
     const { width, height } = this.difficulty;
     const matrix = [];
     for (let rowIdx = 0; rowIdx < height; rowIdx += 1) {
@@ -215,9 +214,9 @@ export default class GameState extends EventTarget {
       for (let colIdx = 0; colIdx < width; colIdx += 1) {
         const cellKey = new CellKey(rowIdx, colIdx);
         const x = borderWidth + colIdx * borderWidth + colIdx * cellSize;
-        const y = borderWidth + rowIdx * borderWidth + rowIdx * cellSize;
+        const y = borderWidth + rowIdx * borderWidth + rowIdx * cellSize + headerHeight;
         this.cellKeys.push(cellKey);
-        matrix[rowIdx][colIdx] = new Cell(cellKey, x, y);
+        matrix[rowIdx][colIdx] = new Cell(cellKey, new Point(x, y));
       }
     }
     return matrix;
@@ -251,19 +250,18 @@ export default class GameState extends EventTarget {
       for (let colIdx = 0; colIdx < this.state[rowIdx].length; colIdx += 1) {
         const cellKey = new CellKey(rowIdx, colIdx);
         const cell = this.getCell(cellKey);
-        if (!cell.isMined) {
-          this.cellsToOpenAmount += 1;
-          const value = this._countNeighboringMines(cellKey);
-          cell.value = value;
-          cell.addEventListener('cellopen', this.handleCellOpen);
-        }
+        if (cell.isMined) continue;
+
+        this.cellsToOpenAmount += 1;
+        const value = this._countNeighboringMines(cellKey);
+        cell.value = value;
+        cell.addEventListener('cellopen', this.handleCellOpen);
       }
     }
   };
 }
 
-GameState.STATUS = {
-  START: 0,
-  RUNNING: 1,
-  END: 2,
-};
+console.log('GAME STATE CREATED');
+
+const gameState = new GameState(config.difficulty);
+export default gameState;

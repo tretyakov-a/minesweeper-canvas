@@ -1,5 +1,6 @@
-import config from './config';
-import { resources } from './resources';
+import config from '@src/js/config';
+import { resources } from '../../resources';
+import GameObject from '../game-object';
 
 const colors = [
   ,
@@ -13,41 +14,37 @@ const colors = [
   'teal',
 ];
 
-export default class Cell extends EventTarget {
-  constructor(key, x, y) {
-    super();
+export default class Cell extends GameObject {
+  constructor(key, offset) {
+    super(offset);
     const { cellSize } = config;
-    this.left = x;
-    this.right = x + cellSize;
-    this.top = y;
-    this.bottom = y + cellSize;
+    this.right = offset.x + cellSize;
+    this.bottom = offset.y + cellSize;
 
     this.state = Cell.STATE_CLOSED;
     this.value = Cell.VALUE_EMPTY;
     this.key = key;
   }
 
-  draw = (ctx) => {
-    const { top, left, bgColor } = this;
+  draw(ctx) {
+    const {
+      offset: { x, y },
+      bgColor,
+    } = this;
     const { cellSize } = config;
-    // ctx.fillStyle = bgColor;
-    // ctx.fillRect(left, top, cellSize, cellSize);
-    ctx.drawImage(this.getDrawStateImage(), left, top, cellSize, cellSize);
+    ctx.drawImage(this.getDrawStateImage(), x, y, cellSize, cellSize);
 
     if (this.state !== Cell.STATE_OPENED) return;
 
     const value = this.getDrawValue();
     if (value === null) return;
     if (value instanceof Image) {
-      ctx.drawImage(value, left + 2, top + 2, cellSize - 4, cellSize - 4);
+      ctx.drawImage(value, x + 2, y + 2, cellSize - 4, cellSize - 4);
     } else {
       ctx.fillStyle = colors[this.value];
-      ctx.font = '14px "Martian Mono"';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      ctx.fillText(value, left + cellSize / 2, top + cellSize / 2 + 2);
+      ctx.fillText(value, x + cellSize / 2, y + cellSize / 2 + 2);
     }
-  };
+  }
 
   getDrawStateImage = () => {
     switch (this.state) {
@@ -77,11 +74,9 @@ export default class Cell extends EventTarget {
   set state(newState) {
     if (newState === Cell.STATE_OPENED) {
       if (this.value === Cell.VALUE_MINE) {
-        // this.emit('mineopen', this);
         this.dispatchEvent(new CustomEvent('mineopen', { detail: { cell: this } }));
       }
       {
-        // this.emit('cellopen', this);
         this.dispatchEvent(new CustomEvent('cellopen', { detail: { cell: this } }));
       }
     }
