@@ -1,9 +1,8 @@
 import config from '@src/js/config';
 import { STATUS } from '@src/js/constants';
 import { randomNumber } from './helpers';
-import Cell from './canvas/ui/cell';
 import CellKey from './cell-key';
-import Point from './canvas/point';
+import CellState from './cell-state';
 
 const checks = {
   topLeft: [-1, -1],
@@ -23,6 +22,8 @@ class GameState extends EventTarget {
     this.flagsCounter = this.difficulty.mines;
     this.cellsToOpenAmount = 0;
     this.cellsOpenedCounter = 0;
+
+    this.isMouseDown = false;
   }
 
   set flagCounter(value) {
@@ -62,10 +63,10 @@ class GameState extends EventTarget {
     }
     if (cell.isFlagged) {
       this.flagsCounter += 1;
-      cell.state = Cell.STATE_CLOSED;
+      cell.status = CellState.STATUS.CLOSED;
     } else {
       this.flagsCounter -= 1;
-      cell.state = Cell.STATE_FLAGGED;
+      cell.status = CellState.STATUS.FLAGGED;
     }
 
     return this.flagsCounter;
@@ -86,7 +87,7 @@ class GameState extends EventTarget {
       return;
     }
 
-    cell.state = Cell.STATE_OPENED;
+    cell.status = CellState.STATUS.OPENED;
 
     if (cell.isEmpty) {
       this._revealEmptySpace(cellKey);
@@ -107,7 +108,7 @@ class GameState extends EventTarget {
         const cellKey = new CellKey(rowIdx, colIdx);
         const cell = this.getCell(cellKey);
         if (!cell.isFlagged && cell.isClosed) {
-          cell.state = Cell.STATE_OPENED;
+          cell.status = CellState.STATUS.OPENED;
         }
       }
     }
@@ -168,12 +169,12 @@ class GameState extends EventTarget {
     if (newDifficulty !== undefined) {
       this.difficulty = newDifficulty;
     }
-    this.status = STATUS.IDLE;
     this.flagsCounter = this.difficulty.mines;
     this.cellsToOpenAmount = 0;
     this.cellsOpenedCounter = 0;
     this.cellKeys = [];
     this.state = this._generateInitialMatrix();
+    this.status = STATUS.IDLE;
   };
 
   _findWrongFlags = () => {
@@ -200,11 +201,11 @@ class GameState extends EventTarget {
         return;
       }
       if (cell.isNumber) {
-        cell.state = Cell.STATE_OPENED;
+        cell.status = CellState.STATUS.OPENED;
         return;
       }
       if (cell.isEmpty) {
-        cell.state = Cell.STATE_OPENED;
+        cell.status = CellState.STATUS.OPENED;
         Object.keys(checks).forEach((checkKey) => reveal(checkKey, newCellKey));
       }
     };
@@ -213,17 +214,14 @@ class GameState extends EventTarget {
   };
 
   _generateInitialMatrix = () => {
-    const { borderWidth, headerHeight, cellSize } = config;
     const { width, height } = this.difficulty;
     const matrix = [];
     for (let rowIdx = 0; rowIdx < height; rowIdx += 1) {
       matrix.push(new Array(width).fill(null));
       for (let colIdx = 0; colIdx < width; colIdx += 1) {
         const cellKey = new CellKey(rowIdx, colIdx);
-        const x = borderWidth + colIdx * borderWidth + colIdx * cellSize;
-        const y = borderWidth + rowIdx * borderWidth + rowIdx * cellSize + headerHeight;
         this.cellKeys.push(cellKey);
-        matrix[rowIdx][colIdx] = new Cell(cellKey, new Point(x, y));
+        matrix[rowIdx][colIdx] = new CellState(cellKey);
       }
     }
     return matrix;
@@ -239,7 +237,7 @@ class GameState extends EventTarget {
       } while (mines[newCellKey.value] || newCellKey.value === excludedCellKey.value);
       mines[newCellKey.value] = 1;
       const cell = this.getCell(newCellKey);
-      cell.value = Cell.VALUE_MINE;
+      cell.value = CellState.VALUE.MINE;
       cell.addEventListener('mineopen', this.handleLose);
     }
   };
@@ -266,8 +264,6 @@ class GameState extends EventTarget {
     }
   };
 }
-
-console.log('GAME STATE CREATED');
 
 const gameState = new GameState(config.difficulty);
 export default gameState;

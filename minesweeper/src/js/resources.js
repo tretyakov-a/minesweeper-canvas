@@ -3,6 +3,9 @@ import closedSrc from '@src/assets/closed.svg';
 import openedSrc from '@src/assets/opened.svg';
 import flaggedSrc from '@src/assets/flagged.svg';
 import flagSrc from '@src/assets/flag.svg';
+import playingSrc from '@src/assets/playing.png';
+import loseSrc from '@src/assets/lose.png';
+import winSrc from '@src/assets/win.png';
 
 export const resources = {
   mine: mineSrc,
@@ -10,6 +13,9 @@ export const resources = {
   opened: openedSrc,
   flagged: flaggedSrc,
   flag: flagSrc,
+  playing: playingSrc,
+  lose: loseSrc,
+  win: winSrc,
 };
 
 const loadImage = (imageSrc) =>

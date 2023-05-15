@@ -5,5 +5,6 @@ export default {
   cellSize: 20,
   headerHeight: 40,
   counterWidth: 60,
-  difficulty: difficulty.easy,
+  resetBtnSize: 40,
+  difficulty: difficulty.expert,
 };

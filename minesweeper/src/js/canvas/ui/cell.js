@@ -1,5 +1,8 @@
 import config from '@src/js/config';
-import { resources } from '../../resources';
+import gameState from '@src/js/game-state';
+import CellState from '@src/js/cell-state';
+import { MOUSE } from '@src/js/constants';
+import { resources } from '@src/js/resources';
 import GameObject from '../game-object';
 
 const colors = [
@@ -15,43 +18,62 @@ const colors = [
 ];
 
 export default class Cell extends GameObject {
-  constructor(key, offset) {
-    super(offset);
+  constructor(options, state) {
     const { cellSize } = config;
-    this.right = offset.x + cellSize;
-    this.bottom = offset.y + cellSize;
+    super({ ...options, width: cellSize, height: cellSize });
 
-    this.state = Cell.STATE_CLOSED;
-    this.value = Cell.VALUE_EMPTY;
-    this.key = key;
+    this.state = state;
+
+    this.addEventListener('mousedown', this.handleMouseDown);
+    this.addEventListener('mouseup', this.handleMouseUp);
   }
+
+  handleMouseDown = (e) => {
+    document.addEventListener('mouseup', this.documentMouseUp);
+    gameState.isMouseDown = e.button === MOUSE.LEFT;
+  };
+
+  documentMouseUp = (e) => {
+    document.removeEventListener('mouseup', this.documentMouseUp);
+    gameState.isMouseDown = false;
+  };
+
+  handleMouseUp = (e) => {
+    if (e.button === MOUSE.LEFT) {
+      return gameState.revealCell(this.state.key);
+    } else if (e.button === MOUSE.RIGHT) {
+      return gameState.flagCell(this.state.key);
+    }
+  };
 
   draw(ctx) {
     const {
       offset: { x, y },
     } = this;
     const { cellSize } = config;
-    ctx.drawImage(this.getDrawStateImage(), x, y, cellSize, cellSize);
+    const img =
+      this.isHovered && gameState.isMouseDown ? resources.opened : this.getDrawStateImage();
+    ctx.drawImage(img, x, y, cellSize, cellSize);
 
-    if (this.state !== Cell.STATE_OPENED) return;
+    if (this.state.status !== CellState.STATUS.OPENED) return;
 
     const value = this.getDrawValue();
     if (value === null) return;
     if (value instanceof Image) {
       ctx.drawImage(value, x + 2, y + 2, cellSize - 4, cellSize - 4);
     } else {
-      ctx.fillStyle = colors[this.value];
+      ctx.fillStyle = colors[this.state.value];
       ctx.fillText(value, x + cellSize / 2, y + cellSize / 2 + 2);
     }
   }
 
   getDrawStateImage = () => {
-    switch (this.state) {
-      case Cell.STATE_CLOSED:
+    switch (this.state.status) {
+      case CellState.STATUS.CLOSED:
         return resources.closed;
-      case Cell.STATE_OPENED:
+      case CellState.STATUS.OPENED:
         return resources.opened;
-      case Cell.STATE_FLAGGED:
+      case CellState.STATUS.FLAGGED:
         return resources.flagged;
       default:
         return resources.closed;
@@ -59,76 +81,8 @@ export default class Cell extends GameObject {
   };
 
   getDrawValue = () => {
-    if (this.value === Cell.VALUE_MINE) return resources.mine;
-    if (this.value === Cell.VALUE_EMPTY) return null;
-    return this.value;
+    if (this.state.isMined) return resources.mine;
+    if (this.state.isEmpty) return null;
+    return this.state.value;
   };
-
-  getKey() {
-    return this.key.value;
-  }
-
-  get state() {
-    return this._state;
-  }
-
-  set state(newState) {
-    if (newState === Cell.STATE_OPENED) {
-      if (this.value === Cell.VALUE_MINE) {
-        this.dispatchEvent(new CustomEvent('mineopen', { detail: { cell: this } }));
-      } else {
-        this.dispatchEvent(new CustomEvent('cellopen', { detail: { cell: this } }));
-      }
-    }
-
-    this._state = newState;
-  }
-
-  get value() {
-    return this._value;
-  }
-
-  set value(newValue) {
-    this._value = newValue;
-  }
-
-  get isOpened() {
-    return this._state === Cell.STATE_OPENED;
-  }
-
-  get isClosed() {
-    return this._state === Cell.STATE_CLOSED;
-  }
-
-  get isFlagged() {
-    return this._state === Cell.STATE_FLAGGED;
-  }
-
-  get isNumber() {
-    return Cell.isNumberValue(this._value);
-  }
-
-  get isEmpty() {
-    return this._value === Cell.VALUE_EMPTY;
-  }
-
-  get isMined() {
-    return this._value === Cell.VALUE_MINE;
-  }
 }
-
-Cell.isNumberValue = (value) => value > 0 && value <= 8;
-
-Cell.STATE_CLOSED = 0;
-Cell.STATE_OPENED = 1;
-Cell.STATE_FLAGGED = 2;
-Cell.VALUE_EMPTY = 0;
-Cell.VALUE_MINE = 9;
-Cell.VALUE_N_1 = 1;
-Cell.VALUE_N_2 = 2;
-Cell.VALUE_N_3 = 3;
-Cell.VALUE_N_4 = 4;
-Cell.VALUE_N_5 = 5;
-Cell.VALUE_N_6 = 6;
-Cell.VALUE_N_7 = 7;
-Cell.VALUE_N_8 = 8;

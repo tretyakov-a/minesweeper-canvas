@@ -1,13 +1,12 @@
 import config from '@src/js/config';
 import gameState from '@src/js/game-state';
-import { STATUS } from '@src/js/constants';
 import { resources } from '@src/js/resources';
 import GameObject from '../game-object';
 
 export default class ResetBtn extends GameObject {
-  constructor(offset) {
+  constructor(options) {
     const { resetBtnSize } = config;
-    super(offset, resetBtnSize, resetBtnSize);
+    super({ ...options, width: resetBtnSize, height: resetBtnSize });
 
     this.iconSize = this.width * 0.6;
     this.iconDrawProps = [
@@ -19,18 +18,24 @@ export default class ResetBtn extends GameObject {
 
     this.reset();
 
-    gameState.addEventListener('statusChanged', this.handleGameStatusChange);
     gameState.addEventListener('win', this.handleWin);
     gameState.addEventListener('lose', this.handleLose);
+    this.addEventListener('mousedown', this.handleMouseDown);
   }
 
   reset = () => {
     this.icon = resources.playing;
+    this.bgImage = resources.closed;
   };
 
-  handleGameStatusChange = (e) => {
-    const { status } = e.detail;
-    if (status === STATUS.IDLE) this.reset();
+  handleMouseDown = () => {
+    this.bgImage = resources.opened;
+    document.addEventListener('mouseup', this.handleMouseUp);
+  };
+
+  handleMouseUp = () => {
+    gameState.reset();
+    document.removeEventListener('mouseup', this.handleMouseUp);
   };
 
   handleWin = () => {
@@ -43,7 +48,7 @@ export default class ResetBtn extends GameObject {
 
   draw(ctx) {
     super.drawWithOffset(ctx, () => {
-      ctx.drawImage(resources.closed, 0, 0, this.width, this.height);
+      ctx.drawImage(this.bgImage, 0, 0, this.width, this.height);
       ctx.drawImage(this.icon, ...this.iconDrawProps);
     });
   }

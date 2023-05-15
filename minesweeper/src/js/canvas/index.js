@@ -4,16 +4,14 @@ import GameObject from './game-object';
 import Point from './point';
 import FlagsCounter from './ui/flags-counter';
 import Grid from './ui/grid';
+import ResetBtn from './ui/reset-btn';
 import Timer from './ui/timer';
-
-const MOUSE = {
-  LEFT: 0,
-  RIGHT: 2,
-};
+import { options } from './utils';
+import { STATUS } from '../constants';
 
 export default class GameCanvas extends GameObject {
   constructor(container) {
-    super(new Point(0, 0));
+    super({ offset: new Point(0, 0) });
     this.canvas = this.createCanvas(container);
     if (!this.canvas.getContext) {
       throw new Error('Canvas is unsupported');
@@ -24,36 +22,54 @@ export default class GameCanvas extends GameObject {
     this.ctx.textBaseline = 'middle';
     this.ctx.textAlign = 'center';
 
-    this.gameObjects = [
-      new Grid(new Point(0, config.headerHeight)),
-      new Timer(new Point(0, 0)),
-      new FlagsCounter(new Point(this.canvas.width - config.counterWidth, 0)),
-    ];
+    const { width, height } = this.canvas;
+    this.width = width;
+    this.height = height;
+
+    const { headerHeight, counterWidth, resetBtnSize } = config;
+    this.add('grid', Grid, options(0, headerHeight, width, height - headerHeight));
+    this.add('timer', Timer, options(width - counterWidth, 0));
+    this.add('flagsCounter', FlagsCounter, options(0, 0));
+    this.add(
+      'resetBtn',
+      ResetBtn,
+      options(width / 2 - resetBtnSize / 2, (headerHeight - resetBtnSize) / 2)
+    );
+
     this.time = 0;
 
     this.canvas.addEventListener('mousedown', this.handleCanvasMouseDown);
+    this.canvas.addEventListener('mouseup', this.handleCanvasMouseUp);
+    this.canvas.addEventListener('mousemove', this.handleCanvasMouseMove);
+    this.canvas.addEventListener('mouseleave', this.handleCanvasMouseLeave);
     this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    gameState.addEventListener('statusChanged', this.handleGameStatusChange);
     this.gameLoop();
   }
 
   handleCanvasMouseDown = (e) => {
-    const { offsetX: mouseX, offsetY: mouseY } = e;
-    const { cellKeys } = gameState;
-    cellKeys.forEach((key) => {
-      const cell = gameState.getCell(key);
-      const {
-        offset: { x, y },
-        right,
-        bottom,
-      } = cell;
-      if (mouseX >= x && mouseX <= right && mouseY >= y && mouseY <= bottom) {
-        if (e.button === MOUSE.LEFT) {
-          gameState.revealCell(cell.key);
-        } else if (e.button === MOUSE.RIGHT) {
-          gameState.flagCell(cell.key);
-        }
-      }
-    });
+    super.onMouseDown(e);
+  };
+
+  handleCanvasMouseUp = (e) => {
+    super.onMouseUp(e);
+  };
+
+  handleCanvasMouseMove = (e) => {
+    super.onMouseMove(e);
+  };
+
+  handleCanvasMouseLeave = (e) => {
+    super.onMouseLeave(e);
+  };
+
+  reset = () => {
+    super.reset();
+  };
+
+  handleGameStatusChange = (e) => {
+    const { status } = e.detail;
+    if (status === STATUS.IDLE) this.reset();
   };
 
   createCanvas = (container) => {
@@ -83,28 +99,14 @@ export default class GameCanvas extends GameObject {
     const currentTime = performance.now();
     const deltaTime = currentTime - this.time;
     this.time = currentTime;
-
-    this.gameObjects.forEach((obj) => {
-      obj.update(deltaTime);
-    });
+    super.update(deltaTime);
   }
 
   draw() {
     const { ctx } = this;
     const { clientWidth, clientHeight } = ctx.canvas;
-    const { cellKeys } = gameState;
 
     ctx.clearRect(0, 0, clientWidth, clientHeight);
-
-    this.gameObjects.forEach((obj) => {
-      obj.draw(ctx);
-    });
-
-    ctx.save();
-    cellKeys.forEach((key) => {
-      const cell = gameState.getCell(key);
-      cell.draw(ctx);
-    });
-    ctx.restore();
+    super.draw(ctx);
   }
 }
