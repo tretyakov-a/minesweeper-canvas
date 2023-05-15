@@ -29,7 +29,6 @@ export default class Cell extends GameObject {
   draw(ctx) {
     const {
       offset: { x, y },
-      bgColor,
     } = this;
     const { cellSize } = config;
     ctx.drawImage(this.getDrawStateImage(), x, y, cellSize, cellSize);
@@ -54,6 +53,8 @@ export default class Cell extends GameObject {
         return resources.opened;
       case Cell.STATE_FLAGGED:
         return resources.flagged;
+      default:
+        return resources.closed;
     }
   };
 
@@ -75,8 +76,7 @@ export default class Cell extends GameObject {
     if (newState === Cell.STATE_OPENED) {
       if (this.value === Cell.VALUE_MINE) {
         this.dispatchEvent(new CustomEvent('mineopen', { detail: { cell: this } }));
-      }
-      {
+      } else {
         this.dispatchEvent(new CustomEvent('cellopen', { detail: { cell: this } }));
       }
     }
@@ -117,9 +117,7 @@ export default class Cell extends GameObject {
   }
 }
 
-Cell.isNumberValue = (value) => {
-  return value > 0 && value <= 8;
-};
+Cell.isNumberValue = (value) => value > 0 && value <= 8;
 
 Cell.STATE_CLOSED = 0;
 Cell.STATE_OPENED = 1;

@@ -1,7 +1,7 @@
-import { renderNumber } from '../../helpers';
-import GameObject from '../game-object';
 import { STATUS } from '@src/js/constants';
 import gameState from '@src/js/game-state';
+import { renderNumber } from '@src/js/helpers';
+import GameObject from '../game-object';
 
 export default class Timer extends GameObject {
   constructor(offset) {

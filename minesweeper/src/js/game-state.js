@@ -1,9 +1,9 @@
+import config from '@src/js/config';
+import { STATUS } from '@src/js/constants';
 import { randomNumber } from './helpers';
 import Cell from './canvas/ui/cell';
 import CellKey from './cell-key';
-import config from '@src/js/config';
 import Point from './canvas/point';
-import { STATUS } from '@src/js/constants';
 
 const checks = {
   topLeft: [-1, -1],
@@ -25,6 +25,12 @@ class GameState extends EventTarget {
     this.cellsOpenedCounter = 0;
   }
 
+  set flagCounter(value) {}
+
+  get flagCounter() {
+    return this._flagCounter;
+  }
+
   set status(value) {
     console.log('new GameState STATUS:', Object.entries(STATUS).find(([key, v]) => v === value)[0]);
     this.dispatchEvent(new CustomEvent('statuschanged', { detail: { status: value } }));
@@ -42,9 +48,8 @@ class GameState extends EventTarget {
     return this.state[cellKey.x][cellKey.y];
   };
 
-  _checkCell = (cellKey) => {
-    return this.state[cellKey.x] !== undefined && this.state[cellKey.x][cellKey.y] !== undefined;
-  };
+  _checkCell = (cellKey) =>
+    this.state[cellKey.x] !== undefined && this.state[cellKey.x][cellKey.y] !== undefined;
 
   flagCell = (cellKey) => {
     const cell = this.getCell(cellKey);
@@ -133,16 +138,15 @@ class GameState extends EventTarget {
     );
   };
 
-  countFlagsAround = (cellKey) => {
-    return Object.values(checks).reduce((counter, [dx, dy]) => {
+  countFlagsAround = (cellKey) =>
+    Object.values(checks).reduce((counter, [dx, dy]) => {
       const newCellKey = new CellKey(cellKey.x + dx, cellKey.y + dy);
       const cell = this.getCell(newCellKey);
       return counter + (cell ? cell.isFlagged : 0);
     }, 0);
-  };
 
-  getHighlightedCells = (cellKey) => {
-    return Object.values(checks).reduce((cells, [dx, dy]) => {
+  getHighlightedCells = (cellKey) =>
+    Object.values(checks).reduce((cells, [dx, dy]) => {
       const newCellKey = new CellKey(cellKey.x + dx, cellKey.y + dy);
       const cell = this.getCell(newCellKey);
       if (cell && cell.isClosed) {
@@ -150,7 +154,6 @@ class GameState extends EventTarget {
       }
       return cells;
     }, []);
-  };
 
   generateState = (cellKey) => {
     this._generateMines(cellKey);
@@ -183,10 +186,10 @@ class GameState extends EventTarget {
     return wrongFlagsKeys;
   };
 
-  _revealEmptySpace = (IDLECellKey) => {
-    const reveal = (key, IDLECellKey) => {
+  _revealEmptySpace = (cellKey) => {
+    const reveal = (key, cellKey) => {
       const [dx, dy] = checks[key];
-      const newCellKey = new CellKey(IDLECellKey.x + dx, IDLECellKey.y + dy);
+      const newCellKey = new CellKey(cellKey.x + dx, cellKey.y + dy);
 
       const cell = this.getCell(newCellKey);
       if (!cell || cell.isOpened || cell.isFlagged) {
@@ -202,7 +205,7 @@ class GameState extends EventTarget {
       }
     };
 
-    Object.keys(checks).forEach((key) => reveal(key, IDLECellKey));
+    Object.keys(checks).forEach((key) => reveal(key, cellKey));
   };
 
   _generateInitialMatrix = () => {
@@ -237,25 +240,24 @@ class GameState extends EventTarget {
     }
   };
 
-  _countNeighboringMines = (cellKey) => {
-    return Object.values(checks).reduce((counter, [dx, dy]) => {
+  _countNeighboringMines = (cellKey) =>
+    Object.values(checks).reduce((counter, [dx, dy]) => {
       const newCellKey = new CellKey(cellKey.x + dx, cellKey.y + dy);
       const cell = this.getCell(newCellKey);
       return counter + (cell ? cell.isMined : 0);
     }, 0);
-  };
 
   _generateNumbers = () => {
     for (let rowIdx = 0; rowIdx < this.state.length; rowIdx += 1) {
       for (let colIdx = 0; colIdx < this.state[rowIdx].length; colIdx += 1) {
         const cellKey = new CellKey(rowIdx, colIdx);
         const cell = this.getCell(cellKey);
-        if (cell.isMined) continue;
-
-        this.cellsToOpenAmount += 1;
-        const value = this._countNeighboringMines(cellKey);
-        cell.value = value;
-        cell.addEventListener('cellopen', this.handleCellOpen);
+        if (!cell.isMined) {
+          this.cellsToOpenAmount += 1;
+          const value = this._countNeighboringMines(cellKey);
+          cell.value = value;
+          cell.addEventListener('cellopen', this.handleCellOpen);
+        }
       }
     }
   };

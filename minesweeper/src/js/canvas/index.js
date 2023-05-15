@@ -4,7 +4,6 @@ import GameObject from './game-object';
 import Point from './point';
 import Grid from './ui/grid';
 import Timer from './ui/timer';
-import { STATUS } from '@src/js/constants';
 
 const MOUSE = {
   LEFT: 0,

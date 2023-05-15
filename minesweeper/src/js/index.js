@@ -1,7 +1,6 @@
 import '../styles/index.scss';
 import initLayout from './layout';
 import GameCanvas from './canvas';
-import config from '@src/js/config';
 import { loadResources } from './resources';
 import gameState from './game-state';
 

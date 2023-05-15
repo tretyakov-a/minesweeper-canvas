@@ -7,8 +7,8 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const RemovePlugin = require('remove-files-webpack-plugin');
 
-module.exports = (env) => {
-  const { mode = 'development' } = env;
+module.exports = (env = { mode: 'developement' }) => {
+  const { mode } = env;
 
   const isProd = mode === 'production';
   const isDev = mode === 'development';
