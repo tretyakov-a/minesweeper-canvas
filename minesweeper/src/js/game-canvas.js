@@ -1,24 +1,36 @@
 import config from './config';
 
+const MOUSE = {
+  LEFT: 0,
+  RIGHT: 2,
+};
+
 export default class GameCanvas extends EventTarget {
-  constructor(container, cells) {
+  constructor(container, gameState) {
     super();
-    this.cells = cells;
+    this.gameState = gameState;
     this.canvas = this.createCanvas(container);
     if (!this.canvas.getContext) {
       throw new Error('Canvas is unsupported');
     }
     this.ctx = this.canvas.getContext('2d');
     this.canvas.addEventListener('mousedown', this.handleCanvasMouseDown);
+    this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     this.startGameLoop();
   }
 
   handleCanvasMouseDown = (e) => {
     const { offsetX: mouseX, offsetY: mouseY } = e;
-    this.cells.forEach((cell) => {
+    const { cellKeys } = this.gameState;
+    cellKeys.forEach((key) => {
+      const cell = this.gameState.getCell(key);
       const { top, right, bottom, left } = cell;
       if (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom) {
-        cell.dispatchEvent(new CustomEvent('mousedown'));
+        if (e.button === MOUSE.LEFT) {
+          this.gameState.revealCell(cell.key);
+        } else if (e.button === MOUSE.RIGHT) {
+          this.gameState.flagCell(cell.key);
+        }
       }
     });
   };
@@ -47,15 +59,19 @@ export default class GameCanvas extends EventTarget {
   draw = () => {
     const { ctx } = this;
     const { clientWidth, clientHeight } = ctx.canvas;
+    const { cellKeys } = this.gameState;
 
-    ctx.clearRect(0, 0, clientWidth, clientHeight); // clear canvas
-    ctx.strokeStyle = 'black';
+    ctx.clearRect(0, 0, clientWidth, clientHeight);
+    ctx.strokeStyle = 'gray';
     ctx.lineWidth = 1;
 
     this.drawGrid();
 
     ctx.save();
-    this.cells.forEach((cell) => cell.draw(ctx));
+    cellKeys.forEach((key) => {
+      const cell = this.gameState.getCell(key);
+      cell.draw(ctx);
+    });
     ctx.restore();
 
     requestAnimationFrame(this.draw);

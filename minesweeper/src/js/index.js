@@ -1,29 +1,33 @@
 import '../styles/index.scss';
 import initLayout from './layout';
-import Cell from './cell';
 import GameCanvas from './game-canvas';
 import config from './config';
+import { loadResources } from './resources';
+import GameState from './game-state';
 
-const createCells = () => {
-  const cells = [];
-  const {
-    difficulty: { width, height },
-    borderWidth,
-    cellSize,
-  } = config;
-  for (let i = 0; i < width; i += 1) {
-    for (let j = 0; j < height; j += 1) {
-      const x = borderWidth + j * borderWidth + j * cellSize;
-      const y = borderWidth + i * borderWidth + i * cellSize;
-      cells.push(new Cell(x, y));
-    }
-  }
-  return cells;
-};
+let endGameMessage = null;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initLayout();
+  endGameMessage = document.querySelector('.end-game-message');
 
-  const cells = createCells();
-  const gameCanvas = new GameCanvas(document.querySelector('#game'), cells);
+  try {
+    await loadResources();
+
+    const gameState = new GameState(config.difficulty);
+    gameState.reset();
+    gameState.addEventListener('win', () => {
+      endGameMessage.textContent = 'Win!';
+    });
+    gameState.addEventListener('lose', (e) => {
+      endGameMessage.textContent = `Lose!`;
+    });
+    const gameCanvas = new GameCanvas(document.querySelector('#game'), gameState);
+
+    document.querySelector('#game button').addEventListener('click', () => {
+      gameState.reset();
+    });
+  } catch (err) {
+    console.log(`Failed to load resource: ${err.message}`);
+  }
 });

@@ -25,3 +25,9 @@
   flex: 0;
   min-height: var(--footer-height);
 }
+
+#game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

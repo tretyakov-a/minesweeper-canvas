@@ -5,9 +5,9 @@ const createDifficulty = (width, height, mines) => ({
 });
 
 export const difficulty = {
-  easy: createDifficulty(9, 9, 10),
-  medium: createDifficulty(16, 16, 40),
-  expert: createDifficulty(30, 16, 99),
+  easy: createDifficulty(10, 10, 10),
+  medium: createDifficulty(15, 15, 40),
+  expert: createDifficulty(25, 25, 99),
 };
 
 export default {

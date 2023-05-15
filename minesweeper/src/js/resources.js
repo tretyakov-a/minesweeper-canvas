@@ -1,13 +1,13 @@
-import flagSrc from '@src/assets/flag.svg';
 import mineSrc from '@src/assets/mine.svg';
 import closedSrc from '@src/assets/closed.svg';
 import openedSrc from '@src/assets/opened.svg';
+import flaggedSrc from '@src/assets/flagged.svg';
 
 export const resources = {
-  flag: flagSrc,
   mine: mineSrc,
   closed: closedSrc,
   opened: openedSrc,
+  flagged: flaggedSrc,
 };
 
 const loadImage = (imageSrc) =>
