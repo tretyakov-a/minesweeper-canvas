@@ -29,11 +29,13 @@ export default class Grid extends GameObject {
   };
 
   handleMouseDown = (e) => {
-    document.addEventListener('mouseup', this.documentMouseUp);
-    this.addEventListener('mousemove', this.highlightCells);
-
     gameState.isMouseDown = e.detail.button === MOUSE.LEFT;
-    this.highlightCells(e);
+
+    if (gameState.isMouseDown) {
+      document.addEventListener('mouseup', this.documentMouseUp);
+      this.addEventListener('mousemove', this.highlightCells);
+      this.highlightCells(e);
+    }
   };
 
   documentMouseUp = (e) => {

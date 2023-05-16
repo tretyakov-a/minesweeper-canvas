@@ -45,6 +45,35 @@ export default class Cell extends GameObject {
     ctx.stroke();
   };
 
+  drawBorders(ctx) {
+    const { width, height } = this;
+    const { borders } = this.state;
+    ctx.strokeStyle = theme.flagColor;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    borders.forEach((border) => {
+      switch (border) {
+        case 'top':
+          ctx.moveTo(0, 0);
+          ctx.lineTo(width, 0);
+          break;
+        case 'right':
+          ctx.moveTo(width, 0);
+          ctx.lineTo(width, height);
+          break;
+        case 'bottom':
+          ctx.moveTo(0, height);
+          ctx.lineTo(width, height);
+          break;
+        case 'left':
+          ctx.moveTo(0, 0);
+          ctx.lineTo(0, height);
+          break;
+      }
+    });
+    ctx.stroke();
+  }
+
   draw(ctx) {
     const { width, height } = this;
 
@@ -65,9 +94,11 @@ export default class Cell extends GameObject {
 
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, width, height);
+
         if (isFlagged) {
           this.drawCross(ctx);
         }
+        // this.drawBorders(ctx);
 
         if (!isOpened) return;
 

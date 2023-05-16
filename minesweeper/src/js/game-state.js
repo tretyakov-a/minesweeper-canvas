@@ -106,6 +106,29 @@ class GameState extends EventTarget {
   revealCell = (cellKey) => {
     this.startGame(cellKey);
     this.openCell(cellKey);
+    // this.setBorders();
+  };
+
+  setBorders = () => {
+    const borders = ['top', 'right', 'bottom', 'left'];
+
+    for (let rowIdx = 0; rowIdx < this.state.length; rowIdx += 1) {
+      for (let colIdx = 0; colIdx < this.state[rowIdx].length; colIdx += 1) {
+        const cellKey = new CellKey(rowIdx, colIdx);
+        const cell = this.getCell(cellKey);
+        if (cell.isOpened) {
+          cell.borders = [];
+          borders.forEach((border) => {
+            const [row, col] = checks[border];
+            const neighborCell = this.getCell(new CellKey(rowIdx + row, colIdx + col));
+            if (!neighborCell) return;
+            if (neighborCell.isClosed || neighborCell.isFlagged) {
+              cell.borders.push(border);
+            }
+          });
+        }
+      }
+    }
   };
 
   openAll = () => {
