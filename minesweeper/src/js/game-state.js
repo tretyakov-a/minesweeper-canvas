@@ -56,7 +56,16 @@ class GameState extends EventTarget {
   _checkCell = (cellKey) =>
     this.state[cellKey.x] !== undefined && this.state[cellKey.x][cellKey.y] !== undefined;
 
+  startGame = (cellKey) => {
+    if (this.status === STATUS.IDLE) {
+      this.status = STATUS.RUNNING;
+      this.generateState(cellKey);
+    }
+  };
+
   flagCell = (cellKey) => {
+    this.startGame(cellKey);
+
     const cell = this.getCell(cellKey);
     if (cell.isOpened) {
       return this.flagsCounter;
@@ -95,10 +104,7 @@ class GameState extends EventTarget {
   };
 
   revealCell = (cellKey) => {
-    if (this.status === STATUS.IDLE) {
-      this.status = STATUS.RUNNING;
-      this.generateState(cellKey);
-    }
+    this.startGame(cellKey);
     this.openCell(cellKey);
   };
 
