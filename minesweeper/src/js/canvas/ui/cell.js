@@ -13,27 +13,36 @@ export default class Cell extends GameObject {
 
     this.state = state;
 
+    this.isHighlighted = false;
+    this.erroneouslyHighlighted = false;
+
     this.addEventListener('mousedown', this.handleMouseDown);
     this.addEventListener('mouseup', this.handleMouseUp);
   }
 
   handleMouseDown = (e) => {
-    if (e.button === MOUSE.RIGHT) {
+    if (e.detail.button === MOUSE.RIGHT) {
       return gameState.flagCell(this.state.key);
     }
-    document.addEventListener('mouseup', this.documentMouseUp);
-    gameState.isMouseDown = e.button === MOUSE.LEFT;
-  };
-
-  documentMouseUp = (e) => {
-    document.removeEventListener('mouseup', this.documentMouseUp);
-    gameState.isMouseDown = false;
   };
 
   handleMouseUp = (e) => {
-    if (e.button === MOUSE.LEFT) {
+    if (e.detail.button === MOUSE.LEFT) {
       return gameState.revealCell(this.state.key);
     }
+  };
+
+  drawCross = (ctx, widthPart = 0.6) => {
+    const { width, height } = this;
+    const padding = (width * (1 - widthPart)) / 2;
+    ctx.strokeStyle = theme.flagColor;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(width - padding, height - padding);
+    ctx.moveTo(width - padding, padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.stroke();
   };
 
   draw(ctx) {
@@ -45,14 +54,22 @@ export default class Cell extends GameObject {
         // const img =
         //   this.isHovered && gameState.isMouseDown ? resources.opened : this.getDrawStateImage();
         // ctx.drawImage(img, 0, 0, width, height);
-        const color =
-          this.isHovered && gameState.isMouseDown && !this.state.isOpened
+        const { isOpened, isFlagged } = this.state;
+        let color =
+          this.isHovered && gameState.isMouseDown && !isOpened && !isFlagged
             ? theme.cellBg.opened
-            : this.getDrawStateColor();
+            : this.getDrawStateBgColor();
+
+        if (this.erroneouslyHighlighted) color = theme.cellBg.error;
+        if (this.isHighlighted) color = `rgba(0, 0, 0, 0.2)`;
+
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, width, height);
+        if (isFlagged) {
+          this.drawCross(ctx);
+        }
 
-        if (this.state.status !== CellState.STATUS.OPENED) return;
+        if (!isOpened) return;
 
         const value = this.getDrawValue();
         if (value === null) return;
@@ -67,7 +84,7 @@ export default class Cell extends GameObject {
     );
   }
 
-  getDrawStateColor = () => {
+  getDrawStateBgColor = () => {
     switch (this.state.status) {
       case CellState.STATUS.CLOSED:
         return theme.cellBg.closed;

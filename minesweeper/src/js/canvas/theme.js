@@ -4,8 +4,10 @@ export default {
   cellBg: {
     opened: '#e3edfc',
     closed: '#f0bb66',
-    flagged: '#4f3408',
+    flagged: '#f0bb66',
+    error: '#ff6347',
   },
+  flagColor: '#4f3408',
   cellText: [
     '#000000',
     '#00418d',

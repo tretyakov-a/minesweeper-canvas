@@ -1,4 +1,5 @@
 import Point from './point';
+import { customMouseEvent } from './utils';
 
 export default class GameObject extends EventTarget {
   constructor(options) {
@@ -43,7 +44,7 @@ export default class GameObject extends EventTarget {
     }
   }
 
-  contains({ x: mouseX, y: mouseY }) {
+  contains(mouseX, mouseY) {
     const {
       offset: { x, y },
       right,
@@ -67,9 +68,9 @@ export default class GameObject extends EventTarget {
   }
 
   checkMousePosition(e, onContains) {
-    const mousePos = new Point(e.offsetX, e.offsetY);
+    const { offsetX, offsetY } = e.detail;
     for (const [key, obj] of this.objects.entries()) {
-      if (obj.contains(mousePos)) {
+      if (obj.contains(offsetX, offsetY)) {
         onContains(obj, key);
       }
     }
@@ -77,26 +78,26 @@ export default class GameObject extends EventTarget {
 
   onMouseDown(e) {
     this.checkMousePosition(e, (obj) => {
-      obj.dispatchEvent(new MouseEvent('mousedown', e));
+      obj.dispatchEvent(customMouseEvent('mousedown', e.detail));
       return obj.onMouseDown(e);
     });
   }
 
   onMouseUp(e) {
     this.checkMousePosition(e, (obj) => {
-      obj.dispatchEvent(new MouseEvent('mouseup', e));
+      obj.dispatchEvent(customMouseEvent('mouseup', e.detail));
       return obj.onMouseUp(e);
     });
   }
 
   onMouseEnter(e) {
     this.isHovered = true;
-    this.dispatchEvent(new MouseEvent('mouseenter', e));
+    this.dispatchEvent(customMouseEvent('mouseenter', e.detail));
   }
 
   onMouseLeave(e) {
     this.isHovered = false;
-    this.dispatchEvent(new MouseEvent('mouseleave', e));
+    this.dispatchEvent(customMouseEvent('mouseleave', e.detail));
     for (const v of this.hovered.values()) {
       v.onMouseLeave(e);
     }
@@ -105,7 +106,7 @@ export default class GameObject extends EventTarget {
 
   onMouseMove(e) {
     this.checkMousePosition(e, (obj, key) => {
-      obj.dispatchEvent(new MouseEvent('mousemove', e));
+      obj.dispatchEvent(customMouseEvent('mousemove', e.detail));
       if (!this.hovered.has(key)) {
         for (const v of this.hovered.values()) {
           v.onMouseLeave(e);

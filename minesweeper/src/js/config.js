@@ -6,5 +6,5 @@ export default {
   headerHeight: 40,
   counterWidth: 60,
   resetBtnSize: 40,
-  difficulty: difficulty.expert,
+  difficulty: difficulty.easy,
 };

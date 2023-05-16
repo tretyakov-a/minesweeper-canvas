@@ -6,7 +6,7 @@ import FlagsCounter from './ui/flags-counter';
 import Grid from './ui/grid';
 import ResetBtn from './ui/reset-btn';
 import Timer from './ui/timer';
-import { options } from './utils';
+import { options, customMouseEventFromReal } from './utils';
 import { STATUS } from '../constants';
 import theme from './theme';
 
@@ -49,19 +49,20 @@ export default class GameCanvas extends GameObject {
   }
 
   handleCanvasMouseDown = (e) => {
-    super.onMouseDown(e);
+    e.preventDefault();
+    super.onMouseDown(customMouseEventFromReal('mousedown', e));
   };
 
   handleCanvasMouseUp = (e) => {
-    super.onMouseUp(e);
+    super.onMouseUp(customMouseEventFromReal('mouseup', e));
   };
 
   handleCanvasMouseMove = (e) => {
-    super.onMouseMove(e);
+    super.onMouseMove(customMouseEventFromReal('mousemove', e));
   };
 
   handleCanvasMouseLeave = (e) => {
-    super.onMouseLeave(e);
+    super.onMouseLeave(customMouseEventFromReal('mouseleave', e));
   };
 
   reset = () => {
