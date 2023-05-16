@@ -4,11 +4,8 @@ import GameCanvas from './canvas';
 import { loadResources } from './resources';
 import gameState from './game-state';
 
-let endGameMessage = null;
-
 document.addEventListener('DOMContentLoaded', async () => {
   initLayout();
-  endGameMessage = document.querySelector('.end-game-message');
 
   try {
     await loadResources();
@@ -18,15 +15,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   gameState.reset();
   gameState.addEventListener('win', () => {
-    endGameMessage.textContent = 'Win!';
+    console.log('Win!');
   });
   gameState.addEventListener('lose', (e) => {
-    endGameMessage.textContent = `Lose!`;
+    console.log('Lose!', e.detail);
   });
 
   const gameCanvas = new GameCanvas(document.querySelector('#game'));
-
-  document.querySelector('#game button').addEventListener('click', () => {
-    gameState.reset();
-  });
 });

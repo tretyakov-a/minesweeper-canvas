@@ -8,6 +8,7 @@ import ResetBtn from './ui/reset-btn';
 import Timer from './ui/timer';
 import { options } from './utils';
 import { STATUS } from '../constants';
+import theme from './theme';
 
 export default class GameCanvas extends GameObject {
   constructor(container) {
@@ -107,6 +108,8 @@ export default class GameCanvas extends GameObject {
     const { clientWidth, clientHeight } = ctx.canvas;
 
     ctx.clearRect(0, 0, clientWidth, clientHeight);
+    ctx.fillStyle = theme.bgColor;
+    ctx.fillRect(0, 0, clientWidth, clientHeight);
     super.draw(ctx);
   }
 }

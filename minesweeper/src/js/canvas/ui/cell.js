@@ -4,18 +4,7 @@ import CellState from '@src/js/cell-state';
 import { MOUSE } from '@src/js/constants';
 import { resources } from '@src/js/resources';
 import GameObject from '../game-object';
-
-const colors = [
-  ,
-  '#00418d',
-  '#00ba71',
-  '#f43545',
-  '#5f2879',
-  '#ff8901',
-  '#00c2de',
-  '#fad717',
-  'teal',
-];
+import theme from '../theme';
 
 export default class Cell extends GameObject {
   constructor(options, state) {
@@ -29,6 +18,9 @@ export default class Cell extends GameObject {
   }
 
   handleMouseDown = (e) => {
+    if (e.button === MOUSE.RIGHT) {
+      return gameState.flagCell(this.state.key);
+    }
     document.addEventListener('mouseup', this.documentMouseUp);
     gameState.isMouseDown = e.button === MOUSE.LEFT;
   };
@@ -41,31 +33,48 @@ export default class Cell extends GameObject {
   handleMouseUp = (e) => {
     if (e.button === MOUSE.LEFT) {
       return gameState.revealCell(this.state.key);
-    } else if (e.button === MOUSE.RIGHT) {
-      return gameState.flagCell(this.state.key);
     }
   };
 
   draw(ctx) {
-    const {
-      offset: { x, y },
-    } = this;
-    const { cellSize } = config;
-    const img =
-      this.isHovered && gameState.isMouseDown ? resources.opened : this.getDrawStateImage();
-    ctx.drawImage(img, x, y, cellSize, cellSize);
+    const { width, height } = this;
 
-    if (this.state.status !== CellState.STATUS.OPENED) return;
+    this.drawWithOffset(ctx, () => {
+      // const img =
+      //   this.isHovered && gameState.isMouseDown ? resources.opened : this.getDrawStateImage();
+      // ctx.drawImage(img, 0, 0, width, height);
+      const color =
+        this.isHovered && gameState.isMouseDown && !this.state.isOpened
+          ? theme.cellBg.opened
+          : this.getDrawStateColor();
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, width, height);
 
-    const value = this.getDrawValue();
-    if (value === null) return;
-    if (value instanceof Image) {
-      ctx.drawImage(value, x + 2, y + 2, cellSize - 4, cellSize - 4);
-    } else {
-      ctx.fillStyle = colors[this.state.value];
-      ctx.fillText(value, x + cellSize / 2, y + cellSize / 2 + 2);
-    }
+      if (this.state.status !== CellState.STATUS.OPENED) return;
+
+      const value = this.getDrawValue();
+      if (value === null) return;
+      if (value instanceof Image) {
+        ctx.drawImage(value, 2, 2, width - 4, height - 4);
+      } else {
+        ctx.fillStyle = theme.cellText[this.state.value];
+        ctx.fillText(value, width / 2, height / 2 + 2);
+      }
+    });
   }
+
+  getDrawStateColor = () => {
+    switch (this.state.status) {
+      case CellState.STATUS.CLOSED:
+        return theme.cellBg.closed;
+      case CellState.STATUS.OPENED:
+        return theme.cellBg.opened;
+      case CellState.STATUS.FLAGGED:
+        return theme.cellBg.flagged;
+      default:
+        return theme.cellBg.closed;
+    }
+  };
 
   getDrawStateImage = () => {
     switch (this.state.status) {

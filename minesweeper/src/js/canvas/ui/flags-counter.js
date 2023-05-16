@@ -4,6 +4,7 @@ import { resources } from '@src/js/resources';
 import { renderNumber } from '@src/js/helpers';
 import GameObject from '../game-object';
 import { options } from '../utils';
+import theme from '../theme';
 
 class Flag extends GameObject {
   draw(ctx) {
@@ -32,8 +33,7 @@ export default class FlagsCounter extends GameObject {
 
   draw(ctx) {
     super.drawWithOffset(ctx, () => {
-      ctx.rect(0, 0, this.width, this.height);
-      ctx.stroke();
+      ctx.fillStyle = theme.textColor;
       ctx.fillText(renderNumber(gameState.flagsCounter, 2), this.width / 2 - 5, this.height / 2);
     });
     super.draw(ctx);

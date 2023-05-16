@@ -3,6 +3,7 @@ import { STATUS } from '@src/js/constants';
 import gameState from '@src/js/game-state';
 import { renderNumber } from '@src/js/helpers';
 import GameObject from '../game-object';
+import theme from '../theme';
 
 export default class Timer extends GameObject {
   constructor(options) {
@@ -32,8 +33,7 @@ export default class Timer extends GameObject {
   draw(ctx) {
     const timeInSeconds = Math.trunc(this.time / 1000);
     super.drawWithOffset(ctx, () => {
-      ctx.rect(0, 0, this.width - 1, this.height);
-      ctx.stroke();
+      ctx.fillStyle = theme.textColor;
       ctx.fillText(renderNumber(timeInSeconds), this.width / 2, this.height / 2);
     });
   }
