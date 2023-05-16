@@ -4,6 +4,8 @@ import GameObject from '../game-object';
 import Cell from './cell';
 import { options } from '../utils';
 
+const cellName = (row, col) => `cell/${row}-${col}`;
+
 export default class Grid extends GameObject {
   constructor(...props) {
     super(...props);
@@ -19,18 +21,30 @@ export default class Grid extends GameObject {
       const { x: row, y: col } = cellKey;
       const x = borderWidth + col * borderWidth + col * cellSize;
       const y = borderWidth + row * borderWidth + row * cellSize;
-      this.add(`cell/${row}-${col}`, Cell, options(x, y), cellState);
+      this.add(cellName(row, col), Cell, options(x, y), cellState);
     }
   };
 
   reset = () => {
     const { cellKeys } = gameState;
     for (const { x: row, y: col } of cellKeys) {
-      this.remove(`cell/${row}-${col}`);
+      this.remove(cellName(row, col));
     }
     super.reset();
     this.addCells();
   };
+
+  checkMousePosition(e, onContains) {
+    const { offsetX, offsetY } = e;
+    const { borderWidth, cellSize, headerHeight } = config;
+    const size = cellSize + borderWidth;
+    const row = Math.floor((offsetY - headerHeight) / size);
+    const col = Math.floor(offsetX / size);
+    const key = cellName(row, col);
+    const obj = this.objects.get(key);
+    if (obj !== undefined && offsetX >= obj.offset.x && offsetY >= obj.offset.y)
+      onContains(obj, key);
+  }
 
   draw(ctx) {
     super.draw(ctx);

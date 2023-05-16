@@ -58,10 +58,10 @@ export default class GameObject extends EventTarget {
     }
   }
 
-  drawWithOffset(ctx, cb) {
+  drawWithOffset(ctx, cb, offset = 0.5) {
     const { x, y } = this.offset;
     ctx.save();
-    ctx.translate(x + 0.5, y + 0.5);
+    ctx.translate(x + offset, y + offset);
     if (cb) cb();
     ctx.restore();
   }

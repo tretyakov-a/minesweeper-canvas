@@ -39,28 +39,32 @@ export default class Cell extends GameObject {
   draw(ctx) {
     const { width, height } = this;
 
-    this.drawWithOffset(ctx, () => {
-      // const img =
-      //   this.isHovered && gameState.isMouseDown ? resources.opened : this.getDrawStateImage();
-      // ctx.drawImage(img, 0, 0, width, height);
-      const color =
-        this.isHovered && gameState.isMouseDown && !this.state.isOpened
-          ? theme.cellBg.opened
-          : this.getDrawStateColor();
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, width, height);
+    this.drawWithOffset(
+      ctx,
+      () => {
+        // const img =
+        //   this.isHovered && gameState.isMouseDown ? resources.opened : this.getDrawStateImage();
+        // ctx.drawImage(img, 0, 0, width, height);
+        const color =
+          this.isHovered && gameState.isMouseDown && !this.state.isOpened
+            ? theme.cellBg.opened
+            : this.getDrawStateColor();
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, width, height);
 
-      if (this.state.status !== CellState.STATUS.OPENED) return;
+        if (this.state.status !== CellState.STATUS.OPENED) return;
 
-      const value = this.getDrawValue();
-      if (value === null) return;
-      if (value instanceof Image) {
-        ctx.drawImage(value, 2, 2, width - 4, height - 4);
-      } else {
-        ctx.fillStyle = theme.cellText[this.state.value];
-        ctx.fillText(value, width / 2, height / 2 + 2);
-      }
-    });
+        const value = this.getDrawValue();
+        if (value === null) return;
+        if (value instanceof Image) {
+          ctx.drawImage(value, 2, 2, width - 4, height - 4);
+        } else {
+          ctx.fillStyle = theme.cellText[this.state.value];
+          ctx.fillText(value, width / 2, height / 2 + 2);
+        }
+      },
+      0
+    );
   }
 
   getDrawStateColor = () => {
