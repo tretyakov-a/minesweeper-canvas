@@ -2,10 +2,8 @@ import config from '../config';
 import gameState from '../game-state';
 import GameObject from './game-object';
 import Point from './point';
-import FlagsCounter from './ui/flags-counter';
 import Grid from './ui/grid';
-import ResetBtn from './ui/reset-btn';
-import Timer from './ui/timer';
+import Header from './ui/header';
 import { gameObjectOptions, customMouseEventFromReal } from './utils';
 import { STATUS } from '../constants';
 import theme from './theme';
@@ -27,15 +25,9 @@ export default class GameCanvas extends GameObject {
     this.width = width;
     this.height = height;
 
-    const { headerHeight, counterWidth, resetBtnSize } = config;
+    const { headerHeight } = config;
     this.add('grid', Grid, gameObjectOptions(0, headerHeight, width, height - headerHeight));
-    this.add('timer', Timer, gameObjectOptions(width - counterWidth, 0));
-    this.add('flagsCounter', FlagsCounter, {});
-    this.add(
-      'resetBtn',
-      ResetBtn,
-      gameObjectOptions(width / 2 - resetBtnSize / 2, (headerHeight - resetBtnSize) / 2)
-    );
+    this.add('header', Header, gameObjectOptions(0, 0, width, headerHeight));
 
     this.time = 0;
 

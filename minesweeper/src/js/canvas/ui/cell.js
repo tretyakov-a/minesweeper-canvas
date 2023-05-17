@@ -54,7 +54,9 @@ export default class Cell extends GameObject {
   };
 
   handleMouseDown = (e) => {
-    gameState.highlightCells(this.state.key);
+    if (e.detail.button === MOUSE.LEFT) {
+      gameState.highlightCells(this.state.key);
+    }
     if (e.detail.button === MOUSE.RIGHT) {
       return gameState.flagCell(this.state.key);
     }
@@ -162,23 +164,4 @@ export default class Cell extends GameObject {
         return theme.cellBg.closed;
     }
   };
-
-  // getDrawStateImage = () => {
-  //   switch (this.state.status) {
-  //     case CellState.STATUS.CLOSED:
-  //       return resources.closed;
-  //     case CellState.STATUS.OPENED:
-  //       return resources.opened;
-  //     case CellState.STATUS.FLAGGED:
-  //       return resources.flagged;
-  //     default:
-  //       return resources.closed;
-  //   }
-  // };
-
-  // getDrawValue = () => {
-  //   if (this.state.isMined) return resources.mine;
-  //   if (this.state.isEmpty) return null;
-  //   return this.state.value;
-  // };
 }

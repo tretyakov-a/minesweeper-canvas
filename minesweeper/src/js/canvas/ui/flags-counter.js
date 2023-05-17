@@ -7,9 +7,9 @@ import ImageObject from './image-object';
 import { RESOURCES } from '@src/js/resources';
 
 export default class FlagsCounter extends GameObject {
-  constructor(flagsCounterOptions) {
+  constructor(options) {
     const { counterWidth, headerHeight } = config;
-    super({ ...flagsCounterOptions, width: counterWidth, height: headerHeight });
+    super({ ...options, width: counterWidth, height: headerHeight });
 
     this.add('flag', ImageObject, {}, RESOURCES.FLAG, 18, 'right');
   }
