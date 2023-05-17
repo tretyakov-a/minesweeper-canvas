@@ -6,6 +6,8 @@ export default class CellState extends EventTarget {
     this.value = CellState.VALUE.EMPTY;
     this.key = key;
     this.borders = [];
+    this.isHighlighted = false;
+    this.errorHighlighted = false;
   }
 
   getKey() {

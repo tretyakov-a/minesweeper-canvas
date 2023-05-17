@@ -24,7 +24,32 @@ class GameState extends EventTarget {
     this.cellsOpenedCounter = 0;
 
     this.isMouseDown = false;
+    this.highlighted = {
+      targetKey: null,
+      cellKeys: [],
+    };
   }
+
+  unhighlightCells = () => {
+    if (this.highlighted.cellKeys.length === 0) return;
+    for (const key of this.highlighted.cellKeys) {
+      this.getCell(key).isHighlighted = false;
+    }
+    this.highlighted = {
+      targetKey: null,
+      cellKeys: [],
+    };
+  };
+
+  highlightCells = (cellKey) => {
+    const { isOpened } = this.getCell(cellKey);
+    if (!isOpened) return;
+    this.highlighted.targetKey = cellKey;
+    this.highlighted.cellKeys = this.getHighlightedCells(cellKey);
+    for (const key of this.highlighted.cellKeys) {
+      this.getCell(key).isHighlighted = true;
+    }
+  };
 
   set flagCounter(value) {
     this._flagCounter = value;
@@ -156,20 +181,20 @@ class GameState extends EventTarget {
     }
   };
 
+  highlightErrors = (mineKey) => {
+    for (const cellKey of [mineKey, ...this._findWrongFlags()]) {
+      this.getCell(cellKey).errorHighlighted = true;
+    }
+  };
+
   handleLose = (e) => {
     if (this.status !== STATUS.RUNNING) {
       return;
     }
     this.status = STATUS.STOPPED;
     this.openAll();
-    this.dispatchEvent(
-      new CustomEvent('lose', {
-        detail: {
-          mineKey: e.detail.cell.key,
-          wrongFlagsKeys: this._findWrongFlags(),
-        },
-      })
-    );
+    this.highlightErrors(e.detail.cell.key);
+    this.dispatchEvent(new CustomEvent('lose'));
   };
 
   countFlagsAround = (cellKey) =>

@@ -1,7 +1,7 @@
 import config from '@src/js/config';
 import gameState from '@src/js/game-state';
 import CellState from '@src/js/cell-state';
-import { MOUSE } from '@src/js/constants';
+import { MOUSE, STATUS } from '@src/js/constants';
 import { resources } from '@src/js/resources';
 import GameObject from '../game-object';
 import theme from '../theme';
@@ -13,20 +13,40 @@ export default class Cell extends GameObject {
 
     this.state = state;
 
-    this.isHighlighted = false;
-    this.erroneouslyHighlighted = false;
-
     this.addEventListener('mousedown', this.handleMouseDown);
     this.addEventListener('mouseup', this.handleMouseUp);
+    this.addEventListener('mouseenter', this.handleMouseEnter);
+    this.addEventListener('mouseleave', this.handleMouseLeave);
+    gameState.addEventListener('statusChanged', this.handleGameStatusChange);
   }
 
+  handleGameStatusChange = (e) => {
+    const { status } = e.detail;
+    if (status === STATUS.STOPPED) {
+      this.removeEventListener('mousedown', this.handleMouseDown);
+      this.removeEventListener('mouseup', this.handleMouseUp);
+      this.removeEventListener('mouseenter', this.handleMouseEnter);
+      this.removeEventListener('mouseleave', this.handleMouseLeave);
+    }
+  };
+
+  handleMouseEnter = () => {
+    if (gameState.isMouseDown) gameState.highlightCells(this.state.key);
+  };
+
+  handleMouseLeave = () => {
+    if (gameState.isMouseDown) gameState.unhighlightCells();
+  };
+
   handleMouseDown = (e) => {
+    gameState.highlightCells(this.state.key);
     if (e.detail.button === MOUSE.RIGHT) {
       return gameState.flagCell(this.state.key);
     }
   };
 
   handleMouseUp = (e) => {
+    gameState.unhighlightCells();
     if (e.detail.button === MOUSE.LEFT) {
       return gameState.revealCell(this.state.key);
     }
@@ -83,22 +103,36 @@ export default class Cell extends GameObject {
         // const img =
         //   this.isHovered && gameState.isMouseDown ? resources.opened : this.getDrawStateImage();
         // ctx.drawImage(img, 0, 0, width, height);
-        const { isOpened, isFlagged } = this.state;
+        const { isOpened, isFlagged, isHighlighted, errorHighlighted } = this.state;
         let color =
           this.isHovered && gameState.isMouseDown && !isOpened && !isFlagged
             ? theme.cellBg.opened
             : this.getDrawStateBgColor();
+        if (errorHighlighted) color = theme.cellBg.error;
 
-        if (this.erroneouslyHighlighted) color = theme.cellBg.error;
-        if (this.isHighlighted) color = `rgba(0, 0, 0, 0.2)`;
+        let hightlightColor = null;
+        if ((this.isHovered && !isOpened) || isHighlighted) hightlightColor = `rgba(0, 0, 0, 0.1)`;
 
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, width, height);
+
+        if (hightlightColor !== null) {
+          ctx.fillStyle = hightlightColor;
+          ctx.fillRect(0, 0, width, height);
+        }
 
         if (isFlagged) {
           this.drawCross(ctx);
         }
         // this.drawBorders(ctx);
+
+        ctx.strokeStyle = theme.bgColor;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(width, 0);
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.stroke();
 
         if (!isOpened) return;
 
