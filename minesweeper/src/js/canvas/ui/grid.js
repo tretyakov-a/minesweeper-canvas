@@ -59,7 +59,9 @@ export default class Grid extends GameObject {
     const obj = this.objects.get(key);
     if (obj !== undefined && offsetX >= obj.offset.x && offsetY >= obj.offset.y) {
       onContains(obj, key);
+      return true;
     }
+    return false;
   }
 
   draw(ctx) {

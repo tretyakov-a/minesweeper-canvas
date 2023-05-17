@@ -79,12 +79,15 @@ export default class GameObject extends EventTarget {
   }
 
   checkMousePosition(e, onContains) {
+    let isInObject = false;
     const { offsetX, offsetY } = e.detail;
     for (const [key, obj] of this.objects.entries()) {
       if (obj.contains(offsetX, offsetY)) {
+        isInObject = true;
         onContains(obj, key);
       }
     }
+    return isInObject;
   }
 
   onMouseDown(e) {
@@ -115,18 +118,25 @@ export default class GameObject extends EventTarget {
     this.hovered.clear();
   }
 
+  unhover = (e) => {
+    for (const v of this.hovered.values()) {
+      v.onMouseLeave(e);
+    }
+    this.hovered.clear();
+  };
+
   onMouseMove(e) {
-    this.checkMousePosition(e, (obj, key) => {
+    const isInObject = this.checkMousePosition(e, (obj, key) => {
       obj.dispatchEvent(customMouseEvent('mousemove', e.detail));
       if (!this.hovered.has(key)) {
-        for (const v of this.hovered.values()) {
-          v.onMouseLeave(e);
-        }
-        this.hovered.clear();
+        this.unhover(e);
         this.hovered.set(key, obj);
         obj.onMouseEnter(e);
       }
       return obj.onMouseMove(e);
     });
+    if (!isInObject) {
+      this.unhover(e);
+    }
   }
 }
