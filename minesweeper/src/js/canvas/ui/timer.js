@@ -33,6 +33,7 @@ export default class Timer extends GameObject {
   draw(ctx) {
     const timeInSeconds = Math.trunc(this.time / 1000);
     super.drawWithOffset(ctx, () => {
+      ctx.font = '18px "Martian Mono"';
       ctx.fillStyle = theme.textColor;
       ctx.fillText(renderNumber(timeInSeconds), this.width / 2, this.height / 2);
     });

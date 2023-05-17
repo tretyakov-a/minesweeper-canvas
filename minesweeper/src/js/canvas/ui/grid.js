@@ -3,7 +3,7 @@ import gameState from '@src/js/game-state';
 import { MOUSE } from '@src/js/constants';
 import GameObject from '../game-object';
 import Cell from './cell';
-import { options } from '../utils';
+import { gameObjectOptions } from '../utils';
 
 const cellName = (row, col) => `cell/${row}-${col}`;
 
@@ -36,7 +36,7 @@ export default class Grid extends GameObject {
       const { x: row, y: col } = cellKey;
       const x = borderWidth + col * borderWidth + col * cellSize;
       const y = borderWidth + row * borderWidth + row * cellSize;
-      this.add(cellName(row, col), Cell, options(x, y), cellState);
+      this.add(cellName(row, col), Cell, gameObjectOptions(x, y), cellState);
     }
   };
 

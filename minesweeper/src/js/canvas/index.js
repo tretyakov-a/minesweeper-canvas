@@ -6,7 +6,7 @@ import FlagsCounter from './ui/flags-counter';
 import Grid from './ui/grid';
 import ResetBtn from './ui/reset-btn';
 import Timer from './ui/timer';
-import { options, customMouseEventFromReal } from './utils';
+import { gameObjectOptions, customMouseEventFromReal } from './utils';
 import { STATUS } from '../constants';
 import theme from './theme';
 
@@ -28,13 +28,13 @@ export default class GameCanvas extends GameObject {
     this.height = height;
 
     const { headerHeight, counterWidth, resetBtnSize } = config;
-    this.add('grid', Grid, options(0, headerHeight, width, height - headerHeight));
-    this.add('timer', Timer, options(width - counterWidth, 0));
-    this.add('flagsCounter', FlagsCounter, options(0, 0));
+    this.add('grid', Grid, gameObjectOptions(0, headerHeight, width, height - headerHeight));
+    this.add('timer', Timer, gameObjectOptions(width - counterWidth, 0));
+    this.add('flagsCounter', FlagsCounter, {});
     this.add(
       'resetBtn',
       ResetBtn,
-      options(width / 2 - resetBtnSize / 2, (headerHeight - resetBtnSize) / 2)
+      gameObjectOptions(width / 2 - resetBtnSize / 2, (headerHeight - resetBtnSize) / 2)
     );
 
     this.time = 0;
@@ -44,7 +44,7 @@ export default class GameCanvas extends GameObject {
     this.canvas.addEventListener('mousemove', this.handleCanvasMouseMove);
     this.canvas.addEventListener('mouseleave', this.handleCanvasMouseLeave);
     this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-    gameState.addEventListener('statusChanged', this.handleGameStatusChange);
+    gameState.addEventListener('statusChange', this.handleGameStatusChange);
     this.gameLoop();
   }
 

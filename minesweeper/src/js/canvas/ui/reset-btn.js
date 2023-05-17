@@ -1,22 +1,16 @@
 import config from '@src/js/config';
 import gameState from '@src/js/game-state';
-import { resources } from '@src/js/resources';
+import { RESOURCES } from '@src/js/resources';
 import GameObject from '../game-object';
+import ImageObject from './image-object';
+import theme from '../theme';
 
 export default class ResetBtn extends GameObject {
   constructor(options) {
     const { resetBtnSize } = config;
     super({ ...options, width: resetBtnSize, height: resetBtnSize });
 
-    this.iconSize = this.width * 0.6;
-    this.iconDrawProps = [
-      (this.width - this.iconSize) / 2,
-      (this.height - this.iconSize) / 2,
-      this.iconSize,
-      this.iconSize,
-    ];
-
-    this.reset();
+    this.add('icon', ImageObject, {}, RESOURCES.PLAYING, resetBtnSize * 0.8);
 
     gameState.addEventListener('win', this.handleWin);
     gameState.addEventListener('lose', this.handleLose);
@@ -24,12 +18,10 @@ export default class ResetBtn extends GameObject {
   }
 
   reset = () => {
-    this.icon = resources.playing;
-    this.bgImage = resources.closed;
+    this.get('icon').resourceKey = RESOURCES.PLAYING;
   };
 
   handleMouseDown = () => {
-    this.bgImage = resources.opened;
     document.addEventListener('mouseup', this.handleMouseUp);
   };
 
@@ -39,17 +31,19 @@ export default class ResetBtn extends GameObject {
   };
 
   handleWin = () => {
-    this.icon = resources.win;
+    this.get('icon').resourceKey = RESOURCES.WIN;
   };
 
   handleLose = () => {
-    this.icon = resources.lose;
+    this.get('icon').resourceKey = RESOURCES.LOSE;
   };
 
   draw(ctx) {
     super.drawWithOffset(ctx, () => {
-      ctx.drawImage(this.bgImage, 0, 0, this.width, this.height);
-      ctx.drawImage(this.icon, ...this.iconDrawProps);
+      if (this.isHovered) {
+        ctx.fillStyle = theme.cellBg.hightlight;
+        ctx.fillRect(0, 0, this.width, this.height);
+      }
     });
   }
 }

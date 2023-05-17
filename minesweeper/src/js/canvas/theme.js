@@ -5,10 +5,11 @@ export default {
     opened: '#e3edfc',
     closed: '#f0bb66',
     flagged: '#f0bb66',
-    error: '#ff6347',
+    error: 'rgba(255, 0, 0, 0.2)',
+    hightlight: 'rgba(0, 0, 0, 0.1)',
   },
   flagColor: '#4f3408',
-  cellText: [
+  cellTextColor: [
     '#000000',
     '#00418d',
     '#00ba71',

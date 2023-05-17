@@ -1,10 +1,10 @@
 import difficulty from './difficulty';
 
 export default {
-  borderWidth: 1,
+  borderWidth: 0,
   cellSize: 20,
   headerHeight: 40,
   counterWidth: 60,
-  resetBtnSize: 40,
+  resetBtnSize: 30,
   difficulty: difficulty.easy,
 };

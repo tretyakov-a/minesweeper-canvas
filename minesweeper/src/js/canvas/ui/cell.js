@@ -2,9 +2,10 @@ import config from '@src/js/config';
 import gameState from '@src/js/game-state';
 import CellState from '@src/js/cell-state';
 import { MOUSE, STATUS } from '@src/js/constants';
-import { resources } from '@src/js/resources';
+import { RESOURCES } from '@src/js/resources';
 import GameObject from '../game-object';
 import theme from '../theme';
+import ImageObject from './image-object';
 
 export default class Cell extends GameObject {
   constructor(options, state) {
@@ -17,8 +18,22 @@ export default class Cell extends GameObject {
     this.addEventListener('mouseup', this.handleMouseUp);
     this.addEventListener('mouseenter', this.handleMouseEnter);
     this.addEventListener('mouseleave', this.handleMouseLeave);
-    gameState.addEventListener('statusChanged', this.handleGameStatusChange);
+    gameState.addEventListener('statusChange', this.handleGameStatusChange);
+    this.state.addEventListener('statusChange', this.handleCellStatusChange);
   }
+
+  handleCellStatusChange = () => {
+    const { isOpened, isClosed, isFlagged, isMined } = this.state;
+    if (isFlagged) {
+      this.add('flag', ImageObject, {}, RESOURCES.FLAG, 12);
+    } else if (isClosed) {
+      this.remove('flag');
+    }
+
+    if (isOpened && isMined) {
+      this.add('mine', ImageObject, {}, RESOURCES.MINE, 14);
+    }
+  };
 
   handleGameStatusChange = (e) => {
     const { status } = e.detail;
@@ -52,20 +67,7 @@ export default class Cell extends GameObject {
     }
   };
 
-  drawCross = (ctx, widthPart = 0.6) => {
-    const { width, height } = this;
-    const padding = (width * (1 - widthPart)) / 2;
-    ctx.strokeStyle = theme.flagColor;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(padding, padding);
-    ctx.lineTo(width - padding, height - padding);
-    ctx.moveTo(width - padding, padding);
-    ctx.lineTo(padding, height - padding);
-    ctx.stroke();
-  };
-
-  drawBorders(ctx) {
+  drawClosedBorders = (ctx) => {
     const { width, height } = this;
     const { borders } = this.state;
     ctx.strokeStyle = theme.flagColor;
@@ -92,58 +94,57 @@ export default class Cell extends GameObject {
       }
     });
     ctx.stroke();
-  }
+  };
+
+  drawBorders = (ctx) => {
+    const { width, height } = this;
+    ctx.strokeStyle = theme.bgColor;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(width, 0);
+    ctx.lineTo(width, height);
+    ctx.lineTo(0, height);
+    ctx.stroke();
+  };
+
+  drawValue = (ctx) => {
+    const { width, height } = this;
+    const { value, isNumber, isEmpty } = this.state;
+    if (!isNumber || isEmpty) return;
+
+    ctx.fillStyle = theme.cellTextColor[this.state.value];
+    ctx.fillText(value, width / 2, height / 2 + 2);
+  };
+
+  drawBackground = (ctx) => {
+    const { width, height } = this;
+    const { isOpened, isFlagged, isHighlighted, errorHighlighted } = this.state;
+    let bgColor =
+      this.isHovered && gameState.isMouseDown && !isOpened && !isFlagged
+        ? theme.cellBg.opened
+        : this.getDrawStateBgColor();
+    if (errorHighlighted) bgColor = theme.cellBg.error;
+
+    let hightlightColor = null;
+    if ((this.isHovered && !isOpened) || isHighlighted) hightlightColor = theme.cellBg.hightlight;
+
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, width, height);
+
+    if (hightlightColor !== null) {
+      ctx.fillStyle = hightlightColor;
+      ctx.fillRect(0, 0, width, height);
+    }
+  };
 
   draw(ctx) {
-    const { width, height } = this;
-
     this.drawWithOffset(
       ctx,
       () => {
-        // const img =
-        //   this.isHovered && gameState.isMouseDown ? resources.opened : this.getDrawStateImage();
-        // ctx.drawImage(img, 0, 0, width, height);
-        const { isOpened, isFlagged, isHighlighted, errorHighlighted } = this.state;
-        let color =
-          this.isHovered && gameState.isMouseDown && !isOpened && !isFlagged
-            ? theme.cellBg.opened
-            : this.getDrawStateBgColor();
-        if (errorHighlighted) color = theme.cellBg.error;
+        this.drawBackground(ctx);
+        this.drawBorders(ctx);
 
-        let hightlightColor = null;
-        if ((this.isHovered && !isOpened) || isHighlighted) hightlightColor = `rgba(0, 0, 0, 0.1)`;
-
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, width, height);
-
-        if (hightlightColor !== null) {
-          ctx.fillStyle = hightlightColor;
-          ctx.fillRect(0, 0, width, height);
-        }
-
-        if (isFlagged) {
-          this.drawCross(ctx);
-        }
-        // this.drawBorders(ctx);
-
-        ctx.strokeStyle = theme.bgColor;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(width, 0);
-        ctx.lineTo(width, height);
-        ctx.lineTo(0, height);
-        ctx.stroke();
-
-        if (!isOpened) return;
-
-        const value = this.getDrawValue();
-        if (value === null) return;
-        if (value instanceof Image) {
-          ctx.drawImage(value, 2, 2, width - 4, height - 4);
-        } else {
-          ctx.fillStyle = theme.cellText[this.state.value];
-          ctx.fillText(value, width / 2, height / 2 + 2);
-        }
+        if (this.state.isOpened) this.drawValue(ctx);
       },
       0
     );
@@ -162,22 +163,22 @@ export default class Cell extends GameObject {
     }
   };
 
-  getDrawStateImage = () => {
-    switch (this.state.status) {
-      case CellState.STATUS.CLOSED:
-        return resources.closed;
-      case CellState.STATUS.OPENED:
-        return resources.opened;
-      case CellState.STATUS.FLAGGED:
-        return resources.flagged;
-      default:
-        return resources.closed;
-    }
-  };
+  // getDrawStateImage = () => {
+  //   switch (this.state.status) {
+  //     case CellState.STATUS.CLOSED:
+  //       return resources.closed;
+  //     case CellState.STATUS.OPENED:
+  //       return resources.opened;
+  //     case CellState.STATUS.FLAGGED:
+  //       return resources.flagged;
+  //     default:
+  //       return resources.closed;
+  //   }
+  // };
 
-  getDrawValue = () => {
-    if (this.state.isMined) return resources.mine;
-    if (this.state.isEmpty) return null;
-    return this.state.value;
-  };
+  // getDrawValue = () => {
+  //   if (this.state.isMined) return resources.mine;
+  //   if (this.state.isEmpty) return null;
+  //   return this.state.value;
+  // };
 }

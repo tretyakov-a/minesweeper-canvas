@@ -4,7 +4,8 @@ import { customMouseEvent } from './utils';
 export default class GameObject extends EventTarget {
   constructor(options) {
     super();
-    const { offset, width = 0, height = 0 } = options;
+    const { offset, width = 0, height = 0, parent } = options;
+    this.parent = parent;
     this.offset = offset;
     this.width = width;
     this.height = height;
@@ -13,6 +14,8 @@ export default class GameObject extends EventTarget {
     this.objects = new Map();
     this.hovered = new Map();
     this.isHovered = false;
+
+    // console.log(this.offset, this.width, this.height, this.constructor.name);
   }
 
   reset() {
@@ -22,11 +25,14 @@ export default class GameObject extends EventTarget {
   }
 
   add(key, ObjectConstructor, options, ...rest) {
-    const { offsetX, offsetY, width = 0, height = 0 } = options;
+    const { offsetX = 0, offsetY = 0, width = 0, height = 0 } = options;
     const { x, y } = this.offset;
     this.objects.set(
       key,
-      new ObjectConstructor({ offset: new Point(x + offsetX, y + offsetY), width, height }, ...rest)
+      new ObjectConstructor(
+        { offset: new Point(x + offsetX, y + offsetY), width, height, parent: this },
+        ...rest
+      )
     );
   }
 
@@ -53,10 +59,14 @@ export default class GameObject extends EventTarget {
     return mouseX >= x && mouseX <= right && mouseY >= y && mouseY <= bottom;
   }
 
-  draw(ctx) {
+  drawDescendants(ctx) {
     for (const obj of this.objects.values()) {
       obj.draw(ctx);
     }
+  }
+
+  draw(ctx) {
+    this.drawDescendants(ctx);
   }
 
   drawWithOffset(ctx, cb, offset = 0.5) {
@@ -64,6 +74,7 @@ export default class GameObject extends EventTarget {
     ctx.save();
     ctx.translate(x + offset, y + offset);
     if (cb) cb();
+    this.drawDescendants(ctx);
     ctx.restore();
   }
 
