@@ -15,19 +15,12 @@ export default class CellState extends EventTarget {
   }
 
   get status() {
-    return this._state;
+    return this._status;
   }
 
-  set status(newState) {
-    if (newState === CellState.STATUS.OPENED) {
-      if (this.value === CellState.VALUE.MINE) {
-        this.dispatchEvent(new CustomEvent('mineopen', { detail: { cell: this } }));
-      } else {
-        this.dispatchEvent(new CustomEvent('cellopen', { detail: { cell: this } }));
-      }
-    }
-
-    this._state = newState;
+  set status(newStatus) {
+    this._status = newStatus;
+    this.dispatchEvent(new CustomEvent('statusChange', { detail: { cell: this } }));
   }
 
   get value() {
@@ -39,15 +32,15 @@ export default class CellState extends EventTarget {
   }
 
   get isOpened() {
-    return this._state === CellState.STATUS.OPENED;
+    return this._status === CellState.STATUS.OPENED;
   }
 
   get isClosed() {
-    return this._state === CellState.STATUS.CLOSED;
+    return this._status === CellState.STATUS.CLOSED;
   }
 
   get isFlagged() {
-    return this._state === CellState.STATUS.FLAGGED;
+    return this._status === CellState.STATUS.FLAGGED;
   }
 
   get isNumber() {

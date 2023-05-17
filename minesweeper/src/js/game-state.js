@@ -64,7 +64,7 @@ class GameState extends EventTarget {
 
   set status(value) {
     this._status = value;
-    this.dispatchEvent(new CustomEvent('statusChanged', { detail: { status: this._status } }));
+    this.dispatchEvent(new CustomEvent('statusChange', { detail: { status: this._status } }));
   }
 
   get status() {
@@ -102,7 +102,6 @@ class GameState extends EventTarget {
       this.flagsCounter -= 1;
       cell.status = CellState.STATUS.FLAGGED;
     }
-
     return this.flagsCounter;
   };
 
@@ -168,10 +167,16 @@ class GameState extends EventTarget {
     }
   };
 
-  handleCellOpen = (e) => {
+  handleCellStatusChange = (e) => {
     if (this.status !== STATUS.RUNNING) {
       return;
     }
+    const { cell } = e.detail;
+    if (cell.isOpened) this.handleCellOpen(cell);
+  };
+
+  handleCellOpen = (cellState) => {
+    if (cellState.isMined) return this.handleLose(cellState);
 
     this.cellsOpenedCounter += 1;
     if (this.cellsOpenedCounter === this.cellsToOpenAmount) {
@@ -187,13 +192,10 @@ class GameState extends EventTarget {
     }
   };
 
-  handleLose = (e) => {
-    if (this.status !== STATUS.RUNNING) {
-      return;
-    }
+  handleLose = (cellState) => {
     this.status = STATUS.STOPPED;
     this.openAll();
-    this.highlightErrors(e.detail.cell.key);
+    this.highlightErrors(cellState.key);
     this.dispatchEvent(new CustomEvent('lose'));
   };
 
@@ -275,7 +277,9 @@ class GameState extends EventTarget {
       for (let colIdx = 0; colIdx < width; colIdx += 1) {
         const cellKey = new CellKey(rowIdx, colIdx);
         this.cellKeys.push(cellKey);
-        matrix[rowIdx][colIdx] = new CellState(cellKey);
+        const cell = new CellState(cellKey);
+        cell.addEventListener('statusChange', this.handleCellStatusChange);
+        matrix[rowIdx][colIdx] = cell;
       }
     }
     return matrix;
@@ -292,7 +296,6 @@ class GameState extends EventTarget {
       mines[newCellKey.value] = 1;
       const cell = this.getCell(newCellKey);
       cell.value = CellState.VALUE.MINE;
-      cell.addEventListener('mineopen', this.handleLose);
     }
   };
 
@@ -312,7 +315,6 @@ class GameState extends EventTarget {
           this.cellsToOpenAmount += 1;
           const value = this._countNeighboringMines(cellKey);
           cell.value = value;
-          cell.addEventListener('cellopen', this.handleCellOpen);
         }
       }
     }
