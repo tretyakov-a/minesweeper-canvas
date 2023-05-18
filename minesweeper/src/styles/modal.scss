@@ -1,0 +1,162 @@
+.modal {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  &__overlay {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  &__window {
+    min-width: 300px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 4rem;
+    border-radius: 5px;
+    background: var(--color-bg-light);
+    box-shadow: 0px 5px 15px -10px black;
+    padding: 1rem;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  &_show,
+  &_hide {
+    display: block;
+
+    .modal__overlay {
+      display: flex;
+    }
+
+    .modal__window {
+      display: block;
+    }
+  }
+
+  &_show {
+    .modal__overlay,
+    .modal__window {
+      animation: 400ms ease forwards fadeIn;
+    }
+  }
+
+  &_hide {
+    .modal__overlay,
+    .modal__window {
+      animation: 400ms ease forwards fadeOut;
+    }
+  }
+
+  &__close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+
+    &:hover:active,
+    &_active {
+      color: var(--color-text-xl);
+      background-color: transparent;
+      transform: translateY(1px);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-text-l);
+        background-color: transparent;
+      }
+    }
+  }
+
+  &_win {
+    .modal__window {
+      border: 1px solid var(--color-win);
+    }
+    .modal__title {
+      color: var(--color-win);
+    }
+  }
+
+  &_lose {
+    .modal__window {
+      border: 1px solid var(--color-lose);
+    }
+    .modal__title {
+      color: var(--color-lose);
+    }
+  }
+
+  &__congratulation {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: justify;
+    padding: 10px;
+    border: 1px solid var(--color-win);
+    border-radius: 3px;
+  }
+
+  &__title {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+    line-height: 140%;
+    color: var(--color-text-xl);
+  }
+
+  &__title-img {
+    display: inline-block;
+    margin-right: 0.5rem;
+    height: 1.6rem;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+
+    &-row {
+      display: flex;
+      line-height: 2rem;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--color-text-m);
+    }
+
+    &-title {
+      color: var(--color-text-xm);
+    }
+
+    &-data {
+      font-weight: bold;
+      color: var(--color-text-xl);
+    }
+  }
+}

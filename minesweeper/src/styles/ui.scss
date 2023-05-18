@@ -3,14 +3,16 @@
   height: 40px;
   font-size: 1.4rem;
   color: var(--color-text-xl);
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   outline: none;
   background: none;
   text-decoration: none;
   cursor: pointer;
   text-align: center;
-  transition: 0.25s;
+  transition: 0.2s;
 
   &:hover:active,
   &_active {

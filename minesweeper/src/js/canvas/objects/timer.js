@@ -13,7 +13,15 @@ export default class Timer extends CachedGameObject {
       font: '18px "Martian Mono"',
     });
     this.reset();
+    gameState.addEventListener('statusChange', this.handleGameStatusChange);
   }
+
+  handleGameStatusChange = (e) => {
+    const { status } = e.detail;
+    if (status === STATUS.STOPPED) {
+      gameState.time = Math.trunc(this.time);
+    }
+  };
 
   set time(value) {
     this._time = value;
