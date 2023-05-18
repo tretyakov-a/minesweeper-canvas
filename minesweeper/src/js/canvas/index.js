@@ -1,29 +1,25 @@
 import config from '../config';
 import gameState from '../game-state';
-import GameObject from './game-object';
-import Point from './point';
+import Point from './core/point';
 import Grid from './objects/grid';
 import Header from './objects/header';
-import { gameObjectOptions, customMouseEventFromReal } from './utils';
+import {
+  gameObjectOptions,
+  customMouseEventFromReal,
+  ctxApplyStyles,
+  createCanvas,
+} from './core/utils';
 import { STATUS } from '../constants';
-import theme from './theme';
+import CachedGameObject from './core/cached-game-object';
 
-export default class GameCanvas extends GameObject {
+export default class GameCanvas extends CachedGameObject {
   constructor(container) {
-    super({ offset: new Point(0, 0) });
-    this.canvas = this.createCanvas(container);
-    if (!this.canvas.getContext) {
-      throw new Error('Canvas is unsupported');
-    }
+    const canvas = createCanvas(container);
+    const { width, height } = canvas;
+    super({ offset: new Point(0, 0), width, height });
 
-    this.ctx = this.canvas.getContext('2d');
-    this.ctx.font = '14px "Martian Mono"';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.textAlign = 'center';
-
-    const { width, height } = this.canvas;
-    this.width = width;
-    this.height = height;
+    this.ctx = canvas.getContext('2d');
+    ctxApplyStyles(this.ctx);
 
     const { headerHeight } = config;
     this.add('grid', Grid, gameObjectOptions(0, headerHeight, width, height - headerHeight));
@@ -31,11 +27,11 @@ export default class GameCanvas extends GameObject {
 
     this.time = 0;
 
-    this.canvas.addEventListener('mousedown', this.handleCanvasMouseDown);
-    this.canvas.addEventListener('mouseup', this.handleCanvasMouseUp);
-    this.canvas.addEventListener('mousemove', this.handleCanvasMouseMove);
-    this.canvas.addEventListener('mouseleave', this.handleCanvasMouseLeave);
-    this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    canvas.addEventListener('mousedown', this.handleCanvasMouseDown);
+    canvas.addEventListener('mouseup', this.handleCanvasMouseUp);
+    canvas.addEventListener('mousemove', this.handleCanvasMouseMove);
+    canvas.addEventListener('mouseleave', this.handleCanvasMouseLeave);
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     gameState.addEventListener('statusChange', this.handleGameStatusChange);
     this.gameLoop();
   }
@@ -57,30 +53,13 @@ export default class GameCanvas extends GameObject {
     super.onMouseLeave(customMouseEventFromReal('mouseleave', e));
   };
 
-  reset = () => {
+  reset() {
     super.reset();
-  };
+  }
 
   handleGameStatusChange = (e) => {
     const { status } = e.detail;
     if (status === STATUS.IDLE) this.reset();
-  };
-
-  createCanvas = (container) => {
-    const {
-      difficulty: { width, height },
-      headerHeight,
-      borderWidth,
-      cellSize,
-    } = config;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = cellSize * width + (width + 1) * borderWidth;
-    canvas.height = cellSize * height + (height + 1) * borderWidth + headerHeight;
-    canvas.id = 'game-canvas';
-    container.append(canvas);
-
-    return canvas;
   };
 
   gameLoop = () => {
@@ -97,12 +76,6 @@ export default class GameCanvas extends GameObject {
   }
 
   draw() {
-    const { ctx } = this;
-    const { clientWidth, clientHeight } = ctx.canvas;
-
-    ctx.clearRect(0, 0, clientWidth, clientHeight);
-    ctx.fillStyle = theme.bgColor;
-    ctx.fillRect(0, 0, clientWidth, clientHeight);
-    super.draw(ctx);
+    this.drawCached(this.ctx);
   }
 }

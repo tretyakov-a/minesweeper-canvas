@@ -14,6 +14,24 @@ export default class CellState extends EventTarget {
     return this.key.value;
   }
 
+  get isHighlighted() {
+    return this._isHighlighted;
+  }
+
+  set isHighlighted(value) {
+    this._isHighlighted = value;
+    this.dispatchEvent(new CustomEvent('stateChange'));
+  }
+
+  get errorHighlighted() {
+    return this._errorHighlighted;
+  }
+
+  set errorHighlighted(value) {
+    this._errorHighlighted = value;
+    this.dispatchEvent(new CustomEvent('stateChange'));
+  }
+
   get status() {
     return this._status;
   }
@@ -21,6 +39,7 @@ export default class CellState extends EventTarget {
   set status(newStatus) {
     this._status = newStatus;
     this.dispatchEvent(new CustomEvent('statusChange', { detail: { cell: this } }));
+    this.dispatchEvent(new CustomEvent('stateChange'));
   }
 
   get value() {

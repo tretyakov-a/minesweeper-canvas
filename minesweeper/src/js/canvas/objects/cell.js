@@ -3,11 +3,11 @@ import gameState from '@src/js/game-state';
 import CellState from '@src/js/cell-state';
 import { MOUSE, STATUS } from '@src/js/constants';
 import { RESOURCES } from '@src/js/resources';
-import GameObject from '../game-object';
-import theme from '../theme';
+import CachedGameObject from '../core/cached-game-object';
+import theme from '../../theme';
 import ImageObject from './image-object';
 
-export default class Cell extends GameObject {
+export default class Cell extends CachedGameObject {
   constructor(options, state) {
     const { cellSize } = config;
     super({ ...options, width: cellSize, height: cellSize });
@@ -20,7 +20,12 @@ export default class Cell extends GameObject {
     this.addEventListener('mouseleave', this.handleMouseLeave);
     gameState.addEventListener('statusChange', this.handleGameStatusChange);
     this.state.addEventListener('statusChange', this.handleCellStatusChange);
+    this.state.addEventListener('stateChange', this.handleCellStateChange);
   }
+
+  handleCellStateChange = () => {
+    this.isChanged = true;
+  };
 
   handleCellStatusChange = () => {
     const { isOpened, isClosed, isFlagged, isMined } = this.state;
@@ -125,10 +130,10 @@ export default class Cell extends GameObject {
       this.isHovered && gameState.isMouseDown && !isOpened && !isFlagged
         ? theme.cellBg.opened
         : this.getDrawStateBgColor();
-    if (errorHighlighted) bgColor = theme.cellBg.error;
 
     let hightlightColor = null;
     if ((this.isHovered && !isOpened) || isHighlighted) hightlightColor = theme.cellBg.hightlight;
+    if (errorHighlighted) hightlightColor = theme.cellBg.error;
 
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, width, height);
@@ -139,17 +144,18 @@ export default class Cell extends GameObject {
     }
   };
 
-  draw(ctx) {
-    this.drawWithOffset(
-      ctx,
-      () => {
-        this.drawBackground(ctx);
-        this.drawBorders(ctx);
+  drawCell = (ctx) => {
+    this.drawBackground(ctx);
+    this.drawBorders(ctx);
 
-        if (this.state.isOpened) this.drawValue(ctx);
-      },
-      0
-    );
+    if (this.state.isOpened) this.drawValue(ctx);
+  };
+
+  draw(ctx) {
+    this.drawCached(ctx, (cachedContext) => {
+      this.drawCell(cachedContext);
+      super.draw(cachedContext);
+    });
   }
 
   getDrawStateBgColor = () => {

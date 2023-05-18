@@ -1,18 +1,19 @@
 import config from '@src/js/config';
 import gameState from '@src/js/game-state';
 import { MOUSE } from '@src/js/constants';
-import GameObject from '../game-object';
 import Cell from './cell';
-import { gameObjectOptions } from '../utils';
+import { gameObjectOptions } from '../core/utils';
+import CachedGameObject from '../core/cached-game-object';
 
 const cellName = (row, col) => `cell/${row}-${col}`;
 
-export default class Grid extends GameObject {
+export default class Grid extends CachedGameObject {
   constructor(...props) {
     super(...props);
 
     this.addCells();
     this.addEventListener('mousedown', this.handleMouseDown);
+    this.setCursor('pointer');
   }
 
   handleMouseDown = (e) => {
@@ -40,14 +41,18 @@ export default class Grid extends GameObject {
     }
   };
 
-  reset = () => {
+  update() {
+    return true;
+  }
+
+  reset() {
     const { cellKeys } = gameState;
     for (const { x: row, y: col } of cellKeys) {
       this.remove(cellName(row, col));
     }
     super.reset();
     this.addCells();
-  };
+  }
 
   checkMousePosition(e, onContains) {
     const { offsetX, offsetY } = e.detail;
@@ -65,6 +70,6 @@ export default class Grid extends GameObject {
   }
 
   draw(ctx) {
-    super.draw(ctx);
+    this.drawCached(ctx);
   }
 }

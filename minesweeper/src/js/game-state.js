@@ -51,15 +51,15 @@ class GameState extends EventTarget {
     }
   };
 
-  set flagCounter(value) {
-    this._flagCounter = value;
+  set flagsCounter(value) {
+    this._flagsCounter = value;
     this.dispatchEvent(
-      new CustomEvent('flagCounterChanged', { detail: { status: this._flagCounter } })
+      new CustomEvent('flagsCounterChanged', { detail: { amount: this._flagsCounter } })
     );
   }
 
-  get flagCounter() {
-    return this._flagCounter;
+  get flagsCounter() {
+    return this._flagsCounter;
   }
 
   set status(value) {

@@ -1,11 +1,11 @@
 import config from '@src/js/config';
-import GameObject from '../game-object';
 import Timer from './timer';
 import FlagsCounter from './flags-counter';
 import ResetBtn from './reset-btn';
-import { gameObjectOptions } from '../utils';
+import { gameObjectOptions } from '../core/utils';
+import CachedGameObject from '../core/cached-game-object';
 
-export default class Header extends GameObject {
+export default class Header extends CachedGameObject {
   constructor(options) {
     super(options);
 
@@ -17,5 +17,9 @@ export default class Header extends GameObject {
       ResetBtn,
       gameObjectOptions(this.width / 2 - resetBtnSize / 2, (headerHeight - resetBtnSize) / 2)
     );
+  }
+
+  draw(ctx) {
+    this.drawCached(ctx);
   }
 }

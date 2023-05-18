@@ -1,16 +1,16 @@
 import { resources } from '@src/js/resources';
-import GameObject from '../game-object';
-import Point from '../point';
+import GameObject from '../core/game-object';
+import Point from '../core/point';
 
 export default class ImageObject extends GameObject {
   constructor(options, resourceKey, imgHeight, position = 'center') {
     const { width, height } = resources[resourceKey];
     const flagSizeRatio = width / height;
-    const imgWidth = imgHeight * flagSizeRatio;
+    const imgWidth = Math.floor(imgHeight * flagSizeRatio);
     const { parent } = options;
 
-    let offsetX = (parent.width - imgWidth) / 2;
-    let offsetY = (parent.height - imgHeight) / 2;
+    let offsetX = Math.floor((parent.width - imgWidth) / 2);
+    let offsetY = Math.floor((parent.height - imgHeight) / 2);
     if (position === 'right') offsetX = parent.width - imgWidth - 5;
 
     super({
@@ -22,6 +22,15 @@ export default class ImageObject extends GameObject {
 
     this.resourceKey = resourceKey;
     this.position = position;
+  }
+
+  get resourceKey() {
+    return this._resourceKey;
+  }
+
+  set resourceKey(value) {
+    this._resourceKey = value;
+    this.isChanged = true;
   }
 
   draw(ctx) {

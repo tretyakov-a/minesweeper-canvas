@@ -14,8 +14,27 @@ export default class GameObject extends EventTarget {
     this.objects = new Map();
     this.hovered = new Map();
     this.isHovered = false;
+    this.isChanged = true; // is change from last redraw
 
     // console.log(this.offset, this.width, this.height, this.constructor.name);
+  }
+
+  get isChanged() {
+    return this._isChanged;
+  }
+
+  set isChanged(value) {
+    this._isChanged = value;
+    if (this.parent) this.parent.isChanged = value;
+  }
+
+  get isHovered() {
+    return this._isHovered;
+  }
+
+  set isHovered(value) {
+    this.isChanged = true;
+    this._isHovered = value;
   }
 
   reset() {
@@ -69,12 +88,12 @@ export default class GameObject extends EventTarget {
     this.drawDescendants(ctx);
   }
 
-  drawWithOffset(ctx, cb, offset = 0.5) {
+  drawWithOffset(ctx, cb, offsetX = 0.5, offsetY = 0.5) {
     const { x, y } = this.offset;
     ctx.save();
-    ctx.translate(x + offset, y + offset);
+    ctx.translate(x + offsetX, y + offsetY);
     if (cb) cb();
-    this.drawDescendants(ctx);
+    // this.drawDescendants(ctx);
     ctx.restore();
   }
 
@@ -92,26 +111,26 @@ export default class GameObject extends EventTarget {
 
   onMouseDown(e) {
     this.checkMousePosition(e, (obj) => {
-      obj.dispatchEvent(customMouseEvent('mousedown', e.detail));
+      obj.dispatchEvent(e);
       return obj.onMouseDown(e);
     });
   }
 
   onMouseUp(e) {
     this.checkMousePosition(e, (obj) => {
-      obj.dispatchEvent(customMouseEvent('mouseup', e.detail));
+      obj.dispatchEvent(e);
       return obj.onMouseUp(e);
     });
   }
 
   onMouseEnter(e) {
     this.isHovered = true;
-    this.dispatchEvent(customMouseEvent('mouseenter', e.detail));
+    this.dispatchEvent(e);
   }
 
   onMouseLeave(e) {
     this.isHovered = false;
-    this.dispatchEvent(customMouseEvent('mouseleave', e.detail));
+    this.dispatchEvent(e);
     for (const v of this.hovered.values()) {
       v.onMouseLeave(e);
     }
@@ -120,23 +139,36 @@ export default class GameObject extends EventTarget {
 
   unhover = (e) => {
     for (const v of this.hovered.values()) {
-      v.onMouseLeave(e);
+      v.onMouseLeave(customMouseEvent('mouseleave', e.detail));
     }
     this.hovered.clear();
   };
 
   onMouseMove(e) {
     const isInObject = this.checkMousePosition(e, (obj, key) => {
-      obj.dispatchEvent(customMouseEvent('mousemove', e.detail));
+      obj.dispatchEvent(e);
       if (!this.hovered.has(key)) {
         this.unhover(e);
         this.hovered.set(key, obj);
-        obj.onMouseEnter(e);
+        obj.onMouseEnter(customMouseEvent('mouseenter', e.detail));
       }
       return obj.onMouseMove(e);
     });
     if (!isInObject) {
       this.unhover(e);
     }
+  }
+
+  setCursor(cursor = 'pointer') {
+    const handleMouseEnter = () => {
+      document.body.style.cursor = cursor;
+    };
+
+    const handleMouseLeave = () => {
+      document.body.style.cursor = 'default';
+    };
+
+    this.addEventListener('mouseenter', handleMouseEnter);
+    this.addEventListener('mouseleave', handleMouseLeave);
   }
 }
