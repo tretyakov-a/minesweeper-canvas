@@ -1,3 +1,5 @@
+@import "@src/styles/breakpoints";
+
 :root {
   --color-primary: #f9804b;
   --color-primary-light: #fe9013;
@@ -14,18 +16,22 @@
   --color-bg-dark: #000000;
   --color-bg-light: #ffffff;
 
-  --color-frosted-glass: rgba(253, 253, 255, 0.52);
-  --color-text-s: #f1f3f2;
+  --color-text: #212121;
+  --color-text-xl: #424242;
+  --color-text-l: #616161;
+  --color-text-xm: #757575;
   --color-text-m: #bdbdbd;
-  --color-text-l: #767474;
-  --color-text-xl: #333b41;
-  --color-text-dark: #000000;
+  --color-text-xs: #e0e0e0;
+  --color-text-s: #f5f5f5;
   --color-text-light: #ffffff;
   --main-font: "Martian Mono", monospace;
 
-  --container-width: 1024px;
-  --container-padding: 20px;
-  --header-height: 50px;
+  --container-width: 500px;
+  --container-padding: 0px;
+  --header-height: 40px;
   --footer-height: 50px;
   --rss-logo-width: 100px;
+
+  @include xs-breakpoint {
+  }
 }

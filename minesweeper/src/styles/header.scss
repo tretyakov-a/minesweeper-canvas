@@ -1,0 +1,30 @@
+@import "@src/styles/breakpoints";
+
+.header {
+  background: #f0bb66;
+
+  &__container {
+    display: flex;
+  }
+
+  &__title {
+    flex: 1;
+    text-align: center;
+    font-size: 1.6rem;
+
+    @include xs-breakpoint {
+      font-size: 1.2rem;
+    }
+  }
+
+  &__help,
+  &__toolbar {
+    flex: 0 0 20%;
+    display: flex;
+    align-items: center;
+  }
+
+  &__toolbar {
+    justify-content: flex-end;
+  }
+}
