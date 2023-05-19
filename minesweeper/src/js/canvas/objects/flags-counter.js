@@ -6,12 +6,14 @@ import ImageObject from './image-object';
 import theme from '../../theme';
 import CachedGameObject from '../core/cached-game-object';
 
+const FLAG_SIZE = 18;
+
 export default class FlagsCounter extends CachedGameObject {
   constructor(options) {
     const { counterWidth, headerHeight } = config;
     super({ ...options, width: counterWidth, height: headerHeight });
 
-    this.add('flag', ImageObject, {}, RESOURCES.FLAG, 18, 'right');
+    this.add('flag', ImageObject, {}, RESOURCES.FLAG, FLAG_SIZE, 'right');
     this.applyStyles({
       font: '18px "Martian Mono"',
     });

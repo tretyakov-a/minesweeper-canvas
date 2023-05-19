@@ -5,7 +5,7 @@ export default {
     opened: '#e3edfc',
     closed: '#f0bb66',
     flagged: '#f0bb66',
-    error: 'rgba(255, 0, 0, 0.2)',
+    error: '#ee8e97',
     hightlight: 'rgba(0, 0, 0, 0.1)',
   },
   flagColor: '#4f3408',

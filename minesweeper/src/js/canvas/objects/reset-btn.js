@@ -4,6 +4,7 @@ import { RESOURCES } from '@src/js/resources';
 import ImageObject from './image-object';
 import theme from '../../theme';
 import CachedGameObject from '../core/cached-game-object';
+import { RESULT } from '@src/js/constants';
 
 export default class ResetBtn extends CachedGameObject {
   constructor(options) {
@@ -12,8 +13,8 @@ export default class ResetBtn extends CachedGameObject {
 
     this.add('icon', ImageObject, {}, RESOURCES.PLAYING, resetBtnSize * 0.8);
 
-    gameState.addEventListener('win', this.handleWin);
-    gameState.addEventListener('lose', this.handleLose);
+    gameState.addEventListener(RESULT.WIN, this.handleWin);
+    gameState.addEventListener(RESULT.LOSS, this.handleLoss);
     this.addEventListener('mousedown', this.handleMouseDown);
     this.setCursor('pointer');
   }
@@ -35,8 +36,8 @@ export default class ResetBtn extends CachedGameObject {
     this.get('icon').resourceKey = RESOURCES.WIN;
   };
 
-  handleLose = () => {
-    this.get('icon').resourceKey = RESOURCES.LOSE;
+  handleLoss = () => {
+    this.get('icon').resourceKey = RESOURCES.LOSS;
   };
 
   draw(ctx) {

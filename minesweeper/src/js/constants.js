@@ -8,3 +8,8 @@ export const MOUSE = {
   LEFT: 0,
   RIGHT: 2,
 };
+
+export const RESULT = {
+  WIN: 'win',
+  LOSS: 'loss',
+};

@@ -1,5 +1,5 @@
 import config from '@src/js/config';
-import { STATUS } from '@src/js/constants';
+import { STATUS, RESULT } from '@src/js/constants';
 import { randomNumber } from './helpers';
 import CellKey from './cell-key';
 import CellState from './cell-state';
@@ -182,7 +182,7 @@ class GameState extends EventTarget {
     if (this.cellsOpenedCounter === this.cellsToOpenAmount) {
       this.status = STATUS.STOPPED;
       this.openAll();
-      this.dispatchEvent(new CustomEvent('win'));
+      this.dispatchEvent(new CustomEvent(RESULT.WIN));
     }
   };
 
@@ -196,7 +196,7 @@ class GameState extends EventTarget {
     this.status = STATUS.STOPPED;
     this.openAll();
     this.highlightErrors(cellState.key);
-    this.dispatchEvent(new CustomEvent('lose'));
+    this.dispatchEvent(new CustomEvent(RESULT.LOSS));
   };
 
   countFlagsAround = (cellKey) =>

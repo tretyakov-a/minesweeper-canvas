@@ -3,8 +3,8 @@ import gameState from '@src/js/game-state';
 import CellState from '@src/js/cell-state';
 import { MOUSE, STATUS } from '@src/js/constants';
 import { RESOURCES } from '@src/js/resources';
+import theme from '@src/js/theme';
 import CachedGameObject from '../core/cached-game-object';
-import theme from '../../theme';
 import ImageObject from './image-object';
 
 export default class Cell extends CachedGameObject {
@@ -30,13 +30,13 @@ export default class Cell extends CachedGameObject {
   handleCellStatusChange = () => {
     const { isOpened, isClosed, isFlagged, isMined } = this.state;
     if (isFlagged) {
-      this.add('flag', ImageObject, {}, RESOURCES.FLAG, 12);
+      this.add('flag', ImageObject, {}, RESOURCES.FLAG, config.flagSize);
     } else if (isClosed) {
       this.remove('flag');
     }
 
     if (isOpened && isMined) {
-      this.add('mine', ImageObject, {}, RESOURCES.MINE, 14);
+      this.add('mine', ImageObject, {}, RESOURCES.MINE, config.mineSize);
     }
   };
 
@@ -106,7 +106,7 @@ export default class Cell extends CachedGameObject {
   drawBorders = (ctx) => {
     const { width, height } = this;
     ctx.strokeStyle = theme.bgColor;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(width, 0);
     ctx.lineTo(width, height);

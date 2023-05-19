@@ -3,32 +3,33 @@ import initLayout from './layout';
 import GameCanvas from './canvas';
 import { loadResources } from './resources';
 import gameState from './game-state';
-import { showModal } from './ui/modal';
+import { showResults } from './ui/results';
 import difficulty from './difficulty';
+import { RESULT } from './constants';
 
 let currentDifficulty = 'easy';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  initLayout();
-
   try {
     await loadResources();
   } catch (err) {
     return console.log(`Failed to load resource: ${err.message}`);
   }
 
+  initLayout();
+
   gameState.reset(difficulty[currentDifficulty]);
-  gameState.addEventListener('win', () => {
-    showModal({
+  gameState.addEventListener(RESULT.WIN, () => {
+    showResults({
       difficulty: currentDifficulty,
-      result: 'win',
+      result: RESULT.WIN,
       time: gameState.time,
     });
   });
-  gameState.addEventListener('lose', () => {
-    showModal({
+  gameState.addEventListener(RESULT.LOSS, () => {
+    showResults({
       difficulty: currentDifficulty,
-      result: 'lose',
+      result: RESULT.LOSS,
       time: gameState.time,
     });
   });

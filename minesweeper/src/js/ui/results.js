@@ -3,9 +3,8 @@ import renderModalContent from '@tpls/results/content.ejs';
 // import { findMinTime } from './statistics';
 import modalTemplate from '@tpls/results/index.ejs';
 import titleTemplate from '@tpls/results/title.ejs';
-import loseSrc from '@src/assets/lose.png';
-import winSrc from '@src/assets/win.png';
 import Modal from './modal';
+import { resources } from '../resources';
 
 let modal = null;
 let title = null;
@@ -31,7 +30,9 @@ function renderContent(isWin, difficulty, time) {
 
 function showResults({ difficulty, result, time }) {
   const isWin = result === 'win';
-  title.innerHTML = isWin ? resultMessage('Win!', winSrc) : resultMessage('Loss!', loseSrc);
+  title.innerHTML = isWin
+    ? resultMessage('Win!', resources.win.src)
+    : resultMessage('Loss!', resources.loss.src);
   content.innerHTML = renderContent(isWin, difficulty, time);
   const resultModificator = isWin ? winModificator : loseModificator;
   modal.removeMods([winModificator, loseModificator]);
