@@ -1,60 +1,62 @@
-import { isClickOutside, renderTime } from '../helpers';
-import renderModalContent from '@tpls/modal/content.ejs';
-// import { findMinTime } from './statistics';
-import modalTemplate from '@tpls/modal/index.ejs';
-import titleTemplate from '@tpls/modal/title.ejs';
-import loseSrc from '@src/assets/lose.png';
-import winSrc from '@src/assets/win.png';
+import closeBtn from '@tpls/modal-close-btn.ejs';
+import { isClickOutside } from '../helpers';
 
-let modal = null;
-let title = null;
-let content = null;
+const defaultOptions = {
+  hideOnClickOutside: false,
+  onHide: null,
+};
 
-const showModificator = 'modal_show';
-const hideModificator = 'modal_hide';
-const winModificator = 'modal_win';
-const loseModificator = 'modal_lose';
-const animationDuration = 400;
+export default class Modal {
+  constructor(className, options = {}) {
+    this.options = { ...defaultOptions, ...options };
+    this.container = document.querySelector(`.${className}`);
 
-const resultMessage = (text, imgSrc) => titleTemplate({ imgSrc, text });
+    this.container.querySelector('.modal__window').insertAdjacentHTML('afterbegin', closeBtn());
+    document.querySelector('.modal__close-btn').addEventListener('click', this.hide);
 
-function renderContent(isWin, difficulty, time) {
-  // const oldBestTime = findMinTime(difficulty);
-  const oldBestTime = 0;
-  const isNewBestTime = isWin && oldBestTime > time;
+    this.mods = {
+      show: 'show',
+      hide: 'hide',
+    };
+    this.transition = 400;
+  }
 
-  return renderModalContent({
-    isNewBestTime,
-    oldBestTime: oldBestTime !== Infinity ? renderTime(oldBestTime) : 0,
-    difficulty,
-    time: renderTime(time),
-  });
+  removeMods = (mods = []) => {
+    this.container.classList.remove(...mods);
+  };
+
+  handleDocumentClick = (e) => {
+    if (isClickOutside(e, ['modal__window'])) {
+      this.hide();
+    }
+  };
+
+  show = (showMods = []) => {
+    this.additionalShowMods = showMods;
+    const {
+      options: { hideOnClickOutside },
+    } = this;
+    this.container.classList.add(this.mods.show, ...showMods);
+    if (hideOnClickOutside) {
+      document.addEventListener('click', this.handleDocumentClick);
+    }
+  };
+
+  hide = () => {
+    const {
+      mods,
+      transition,
+      container,
+      options: { hideOnClickOutside, onHide },
+    } = this;
+    container.classList.remove(mods.show, ...this.additionalShowMods);
+    container.classList.add(mods.hide);
+    if (onHide) onHide();
+    if (hideOnClickOutside) {
+      document.removeEventListener('click', this.handleDocumentClick);
+    }
+    setTimeout(() => {
+      container.classList.remove(mods.hide);
+    }, transition);
+  };
 }
-
-function showModal({ difficulty, result, time }) {
-  const isWin = result === 'win';
-  title.innerHTML = isWin ? resultMessage('You won!', winSrc) : resultMessage('You lost!', loseSrc);
-  content.innerHTML = renderContent(isWin, difficulty, time);
-  const resultModificator = isWin ? winModificator : loseModificator;
-  modal.classList.remove(winModificator, loseModificator);
-  modal.classList.add(showModificator, resultModificator);
-}
-
-function hideModal() {
-  modal.classList.remove(showModificator);
-  modal.classList.add(hideModificator);
-
-  setTimeout(() => {
-    modal.classList.remove(hideModificator);
-  }, animationDuration);
-}
-
-function initModal() {
-  document.body.insertAdjacentHTML('afterbegin', modalTemplate());
-  modal = document.querySelector('.modal');
-  title = modal.querySelector('.modal__title');
-  content = modal.querySelector('.modal__content');
-  modal.querySelector('.modal__close-btn').addEventListener('click', hideModal);
-}
-
-export { showModal, initModal };

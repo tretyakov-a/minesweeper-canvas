@@ -25,6 +25,7 @@ body {
   background-color: var(--color-bg-light);
   display: flex;
   flex-direction: column;
+  -webkit-tap-highlight-color: transparent;
 
   &.no-y-scroll {
     overflow-y: hidden;

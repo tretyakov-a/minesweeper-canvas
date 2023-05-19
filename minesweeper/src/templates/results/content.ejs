@@ -1,0 +1,18 @@
+<div class="results__content-row">
+  <span class="results__content-title">Difficulty:</span>
+  <span class="results__content-data"><%= locals.difficulty %></span>
+</div>
+
+<div class="results__content-row">
+  <span class="results__content-title">Time:</span>
+  <span class="results__content-data"><%= locals.time %></span>
+</div>
+
+<% if (locals.isNewBestTime) { %>
+  <div class="results__congratulation">
+    Congratulations! Its new best time on <%= locals.difficulty %> difficulty!
+    <% if (locals.oldBestTime !== 0) { %>
+    Old one is <%= locals.oldBestTime %>.
+    <% } %>
+  </div>
+<% } %>

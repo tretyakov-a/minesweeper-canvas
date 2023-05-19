@@ -1,0 +1,17 @@
+<div class="modal menu">
+  <div class="modal__overlay menu__overlay">
+    <div class="modal__window menu__window">
+      <ul class="menu__list">
+        <li class="menu__list-item" data-tab="help">
+          <%- require('./help.ejs')() %>
+        </li>
+        <li class="menu__list-item" data-tab="stats">
+          <%- require('./stats.ejs')() %>
+        </li>
+        <li class="menu__list-item" data-tab="settings">
+          <%- require('./settings.ejs')() %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

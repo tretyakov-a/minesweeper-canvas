@@ -15,9 +15,13 @@
   transition: 0.2s;
 
   &:hover:active,
-  &_active {
+  &.active {
     color: var(--color-text-xl);
     background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  &.active {
+    pointer-events: none;
   }
 
   @include no-select;

@@ -1,0 +1,71 @@
+.menu {
+  top: var(--header-height);
+  max-height: calc(100% - var(--header-height));
+  overflow: hidden;
+
+  &__overlay {
+    padding-top: 1rem;
+  }
+
+  &__window {
+    width: 500px;
+    max-height: 100%;
+    padding: 0;
+  }
+
+  &__title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: var(--color-text-l);
+  }
+
+  &__list {
+    position: relative;
+  }
+
+  &__list-item {
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+    display: none;
+    padding: 2rem;
+
+    &.show,
+    &.hide {
+      display: block;
+    }
+
+    &.show {
+      animation: var(--modal-transition) ease-out forwards fadeIn;
+    }
+
+    &.hide {
+      animation: var(--modal-transition) ease-out forwards fadeOut;
+    }
+  }
+
+  &__content {
+    font-size: 0.75rem;
+    line-height: 140%;
+
+    p {
+      margin-bottom: 0.5rem;
+      text-indent: 1rem;
+      text-align: justify;
+    }
+  }
+}
+
+.help {
+  &__learn-more-link {
+    text-align: right;
+    margin-top: 2rem;
+
+    a {
+      span {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}

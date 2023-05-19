@@ -32,6 +32,8 @@
   --footer-height: 50px;
   --rss-logo-width: 100px;
 
+  --modal-transition: 400ms;
+
   @include xs-breakpoint {
   }
 }
