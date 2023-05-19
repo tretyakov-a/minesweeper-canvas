@@ -1,6 +1,45 @@
 <div class="menu__content settings">
   <h3 class="menu__title">Settings</h3>
-  <p>
-    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-  </p>
+
+  <form class="settings__form">
+
+    <div class="settings__row">
+      <div class="settings__title">
+        Difficulty
+      </div>
+      <div class="settings__input">
+        <select name="difficulty" id="difficulty">
+          <option value="easy">easy</option>
+          <option value="medium">medium</option>
+          <option value="expert">expert</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__title">
+        Number of mines
+      </div>
+      <div class="settings__input">
+        <div class="mines-input">
+          <input class="mines-input__number" type="number" name="mines" id="mines" min="10" max="99">
+          <img class="mines-input__img" src="<%= require('@src/assets/mine.svg') %>" alt="mine">
+        </div>
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__title">
+        Theme
+      </div>
+      <div class="settings__input">
+        <select name="theme" id="theme">
+          <option value="light">light</option>
+          <option value="dark">dark</option>
+        </select>
+      </div>
+    </div>
+
+      <button class="button settings__button" type="submit">Apply</button>
+  </form>
 </div>

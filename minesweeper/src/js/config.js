@@ -1,12 +1,12 @@
-import difficulty from './difficulty';
+import { DIFFICULTY } from './constants';
 
-export default {
-  borderWidth: 0,
-  cellSize: 24,
+const config = {
+  getCellSize: (difficulty) => (difficulty === DIFFICULTY.EXPERT ? 20 : 24),
   flagSize: 12,
   mineSize: 14,
   headerHeight: 40,
   counterWidth: 60,
   resetBtnSize: 30,
-  difficulty: difficulty.easy,
 };
+
+export default config;

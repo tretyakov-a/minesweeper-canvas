@@ -13,3 +13,14 @@ export const RESULT = {
   WIN: 'win',
   LOSS: 'loss',
 };
+
+export const DIFFICULTY = {
+  EASY: 'easy',
+  MEDIUM: 'medium',
+  EXPERT: 'expert',
+};
+
+export const THEME = {
+  DARK: 'dark',
+  LIGHT: 'light',
+};

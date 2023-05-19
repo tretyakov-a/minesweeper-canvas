@@ -1,7 +1,7 @@
 @import "@src/styles/breakpoints";
 
 .header {
-  background: #f0bb66;
+  background: var(--color-primary);
 
   &__container {
     display: flex;

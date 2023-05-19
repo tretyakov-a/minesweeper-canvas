@@ -1,5 +1,7 @@
-import theme from '../../theme';
-import config from '../../config';
+import theme from '@src/js/theme';
+import config from '@src/js/config';
+import gameState from '@src/js/game-state';
+import difficulty from '@src/js/difficulty';
 
 export const gameObjectOptions = (offsetX, offsetY, width = 0, height = 0) => {
   return {
@@ -27,19 +29,15 @@ export const ctxApplyStyles = (ctx) => {
 };
 
 export const createCanvas = (container) => {
-  const {
-    difficulty: { width, height },
-    headerHeight,
-    borderWidth,
-    cellSize,
-  } = config;
-
+  const { headerHeight, getCellSize } = config;
+  const cellSize = getCellSize(gameState.difficultyKey);
+  const { width, height } = difficulty[gameState.difficultyKey];
   const canvas = document.createElement('canvas');
   if (!canvas.getContext) {
     throw new Error('Canvas is unsupported');
   }
-  canvas.width = cellSize * width + (width + 1) * borderWidth;
-  canvas.height = cellSize * height + (height + 1) * borderWidth + headerHeight;
+  canvas.width = cellSize * width;
+  canvas.height = cellSize * height + headerHeight;
   canvas.id = 'game-canvas';
   container.append(canvas);
 

@@ -37,6 +37,13 @@ export default class GameObject extends EventTarget {
     this._isHovered = value;
   }
 
+  destroy() {
+    for (const obj of this.objects.values()) {
+      obj.destroy();
+    }
+    this.objects.clear();
+  }
+
   reset() {
     for (const obj of this.objects.values()) {
       obj.reset();

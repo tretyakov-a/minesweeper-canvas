@@ -1,8 +1,8 @@
-import config from '@src/js/config';
-import { STATUS, RESULT } from '@src/js/constants';
+import { STATUS, RESULT, DIFFICULTY } from '@src/js/constants';
 import { randomNumber } from './helpers';
 import CellKey from './cell-key';
 import CellState from './cell-state';
+import difficulty from './difficulty';
 
 const checks = {
   topLeft: [-1, -1],
@@ -16,10 +16,11 @@ const checks = {
 };
 
 class GameState extends EventTarget {
-  constructor(difficulty) {
+  constructor(difficultyKey = DIFFICULTY.EASY) {
     super();
-    this.difficulty = difficulty;
-    this.flagsCounter = this.difficulty.mines;
+    this.difficultyKey = difficultyKey;
+    this.isDifficultyChanged = true;
+    this.numOfMines = difficulty[this.difficultyKey].mines;
     this.cellsToOpenAmount = 0;
     this.cellsOpenedCounter = 0;
 
@@ -28,6 +29,15 @@ class GameState extends EventTarget {
       targetKey: null,
       cellKeys: [],
     };
+  }
+
+  get numOfMines() {
+    return this._numOfMines;
+  }
+
+  set numOfMines(value) {
+    this._numOfMines = value;
+    this.flagsCounter = value;
   }
 
   unhighlightCells = () => {
@@ -130,29 +140,6 @@ class GameState extends EventTarget {
   revealCell = (cellKey) => {
     this.startGame(cellKey);
     this.openCell(cellKey);
-    // this.setBorders();
-  };
-
-  setBorders = () => {
-    const borders = ['top', 'right', 'bottom', 'left'];
-
-    for (let rowIdx = 0; rowIdx < this.state.length; rowIdx += 1) {
-      for (let colIdx = 0; colIdx < this.state[rowIdx].length; colIdx += 1) {
-        const cellKey = new CellKey(rowIdx, colIdx);
-        const cell = this.getCell(cellKey);
-        if (cell.isOpened) {
-          cell.borders = [];
-          borders.forEach((border) => {
-            const [row, col] = checks[border];
-            const neighborCell = this.getCell(new CellKey(rowIdx + row, colIdx + col));
-            if (!neighborCell) return;
-            if (neighborCell.isClosed || neighborCell.isFlagged) {
-              cell.borders.push(border);
-            }
-          });
-        }
-      }
-    }
   };
 
   openAll = () => {
@@ -182,7 +169,7 @@ class GameState extends EventTarget {
     if (this.cellsOpenedCounter === this.cellsToOpenAmount) {
       this.status = STATUS.STOPPED;
       this.openAll();
-      this.dispatchEvent(new CustomEvent(RESULT.WIN));
+      this.dispatchEvent(new CustomEvent('gameOver', { detail: { result: RESULT.WIN } }));
     }
   };
 
@@ -196,7 +183,7 @@ class GameState extends EventTarget {
     this.status = STATUS.STOPPED;
     this.openAll();
     this.highlightErrors(cellState.key);
-    this.dispatchEvent(new CustomEvent(RESULT.LOSS));
+    this.dispatchEvent(new CustomEvent('gameOver', { detail: { result: RESULT.LOSS } }));
   };
 
   countFlagsAround = (cellKey) =>
@@ -221,11 +208,14 @@ class GameState extends EventTarget {
     this._generateNumbers();
   };
 
-  reset = (newDifficulty) => {
+  reset = (newDifficulty, isCustom = false) => {
+    this.isCustom = isCustom;
+    this.isDifficultyChanged = false;
     if (newDifficulty !== undefined) {
-      this.difficulty = newDifficulty;
+      this.isDifficultyChanged = this.difficultyKey !== newDifficulty;
+      this.difficultyKey = newDifficulty;
     }
-    this.flagsCounter = this.difficulty.mines;
+    this.flagsCounter = this.numOfMines;
     this.cellsToOpenAmount = 0;
     this.cellsOpenedCounter = 0;
     this.cellKeys = [];
@@ -270,7 +260,7 @@ class GameState extends EventTarget {
   };
 
   _generateInitialMatrix = () => {
-    const { width, height } = this.difficulty;
+    const { width, height } = difficulty[this.difficultyKey];
     const matrix = [];
     for (let rowIdx = 0; rowIdx < height; rowIdx += 1) {
       matrix.push(new Array(width).fill(null));
@@ -286,9 +276,9 @@ class GameState extends EventTarget {
   };
 
   _generateMines = (excludedCellKey) => {
-    const { mines: minesNumber, width, height } = this.difficulty;
+    const { width, height } = difficulty[this.difficultyKey];
     const mines = {};
-    for (let k = 0; k < minesNumber; k += 1) {
+    for (let k = 0; k < this.numOfMines; k += 1) {
       let newCellKey;
       do {
         newCellKey = new CellKey(randomNumber(0, height), randomNumber(0, width));
@@ -321,5 +311,5 @@ class GameState extends EventTarget {
   };
 }
 
-const gameState = new GameState(config.difficulty);
+const gameState = new GameState();
 export default gameState;

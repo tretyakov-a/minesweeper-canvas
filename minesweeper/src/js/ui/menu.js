@@ -1,6 +1,7 @@
 import menuTemplate from '@tpls/menu/index.ejs';
 import Modal from './modal';
 
+let callbacks = null;
 let menuWindow = null;
 let tabs = {
   help: null,
@@ -56,9 +57,12 @@ const onHide = () => {
   isMenuOpened = false;
   currentTab = null;
   closeTabs();
+  if (callbacks.onClose) callbacks.onClose();
 };
 
-const initMenu = () => {
+const initMenu = (args) => {
+  callbacks = args;
+
   document.body.insertAdjacentHTML('afterbegin', menuTemplate());
 
   modal = new Modal('menu', { hideOnClickOutside: true, onHide });
@@ -71,4 +75,8 @@ const initMenu = () => {
   });
 };
 
-export { initMenu };
+const hideMenu = () => {
+  if (modal) modal.hide();
+};
+
+export { initMenu, hideMenu };

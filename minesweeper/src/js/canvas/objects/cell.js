@@ -9,18 +9,35 @@ import ImageObject from './image-object';
 
 export default class Cell extends CachedGameObject {
   constructor(options, state) {
-    const { cellSize } = config;
-    super({ ...options, width: cellSize, height: cellSize });
+    super(options);
 
     this.state = state;
 
+    this.setListeners();
+    gameState.addEventListener('statusChange', this.handleGameStatusChange);
+  }
+
+  destroy() {
+    gameState.removeEventListener('statusChange', this.handleGameStatusChange);
+    this.state.removeEventListener('statusChange', this.handleCellStatusChange);
+    this.state.removeEventListener('stateChange', this.handleCellStateChange);
+    super.destroy();
+  }
+
+  setListeners() {
     this.addEventListener('mousedown', this.handleMouseDown);
     this.addEventListener('mouseup', this.handleMouseUp);
     this.addEventListener('mouseenter', this.handleMouseEnter);
     this.addEventListener('mouseleave', this.handleMouseLeave);
-    gameState.addEventListener('statusChange', this.handleGameStatusChange);
     this.state.addEventListener('statusChange', this.handleCellStatusChange);
     this.state.addEventListener('stateChange', this.handleCellStateChange);
+  }
+
+  reset() {
+    this.state = gameState.getCell(this.state.key);
+    this.setListeners();
+    this.isChanged = true;
+    this.objects.clear();
   }
 
   handleCellStateChange = () => {
@@ -74,36 +91,7 @@ export default class Cell extends CachedGameObject {
     }
   };
 
-  drawClosedBorders = (ctx) => {
-    const { width, height } = this;
-    const { borders } = this.state;
-    ctx.strokeStyle = theme.flagColor;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    borders.forEach((border) => {
-      switch (border) {
-        case 'top':
-          ctx.moveTo(0, 0);
-          ctx.lineTo(width, 0);
-          break;
-        case 'right':
-          ctx.moveTo(width, 0);
-          ctx.lineTo(width, height);
-          break;
-        case 'bottom':
-          ctx.moveTo(0, height);
-          ctx.lineTo(width, height);
-          break;
-        case 'left':
-          ctx.moveTo(0, 0);
-          ctx.lineTo(0, height);
-          break;
-      }
-    });
-    ctx.stroke();
-  };
-
-  drawBorders = (ctx) => {
+  drawBorders(ctx) {
     const { width, height } = this;
     ctx.strokeStyle = theme.bgColor;
     ctx.lineWidth = 2;
@@ -112,18 +100,18 @@ export default class Cell extends CachedGameObject {
     ctx.lineTo(width, height);
     ctx.lineTo(0, height);
     ctx.stroke();
-  };
+  }
 
-  drawValue = (ctx) => {
+  drawValue(ctx) {
     const { width, height } = this;
     const { value, isNumber, isEmpty } = this.state;
     if (!isNumber || isEmpty) return;
 
     ctx.fillStyle = theme.cellTextColor[this.state.value];
     ctx.fillText(value, width / 2, height / 2 + 2);
-  };
+  }
 
-  drawBackground = (ctx) => {
+  drawBackground(ctx) {
     const { width, height } = this;
     const { isOpened, isFlagged, isHighlighted, errorHighlighted } = this.state;
     let bgColor =
@@ -142,14 +130,14 @@ export default class Cell extends CachedGameObject {
       ctx.fillStyle = hightlightColor;
       ctx.fillRect(0, 0, width, height);
     }
-  };
+  }
 
-  drawCell = (ctx) => {
+  drawCell(ctx) {
     this.drawBackground(ctx);
     this.drawBorders(ctx);
 
     if (this.state.isOpened) this.drawValue(ctx);
-  };
+  }
 
   draw(ctx) {
     this.drawCached(ctx, (cachedContext) => {
@@ -158,7 +146,7 @@ export default class Cell extends CachedGameObject {
     });
   }
 
-  getDrawStateBgColor = () => {
+  getDrawStateBgColor() {
     switch (this.state.status) {
       case CellState.STATUS.CLOSED:
         return theme.cellBg.closed;
@@ -169,5 +157,5 @@ export default class Cell extends CachedGameObject {
       default:
         return theme.cellBg.closed;
     }
-  };
+  }
 }

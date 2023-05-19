@@ -20,6 +20,11 @@ export default class FlagsCounter extends CachedGameObject {
     gameState.addEventListener('flagsCounterChanged', this.handleFlagCounterChange);
   }
 
+  destroy() {
+    gameState.removeEventListener('flagsCounterChanged', this.handleFlagCounterChange);
+    super.destroy();
+  }
+
   handleFlagCounterChange = () => {
     this.isChanged = true;
   };

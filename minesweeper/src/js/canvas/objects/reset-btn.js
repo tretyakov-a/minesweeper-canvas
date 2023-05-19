@@ -13,15 +13,19 @@ export default class ResetBtn extends CachedGameObject {
 
     this.add('icon', ImageObject, {}, RESOURCES.PLAYING, resetBtnSize * 0.8);
 
-    gameState.addEventListener(RESULT.WIN, this.handleWin);
-    gameState.addEventListener(RESULT.LOSS, this.handleLoss);
+    gameState.addEventListener('gameOver', this.handleGameOver);
     this.addEventListener('mousedown', this.handleMouseDown);
     this.setCursor('pointer');
   }
 
-  reset = () => {
+  destroy() {
+    gameState.removeEventListener('gameOver', this.handleGameOver);
+    super.destroy();
+  }
+
+  reset() {
     this.get('icon').resourceKey = RESOURCES.PLAYING;
-  };
+  }
 
   handleMouseDown = () => {
     document.addEventListener('mouseup', this.handleMouseUp);
@@ -32,12 +36,9 @@ export default class ResetBtn extends CachedGameObject {
     document.removeEventListener('mouseup', this.handleMouseUp);
   };
 
-  handleWin = () => {
-    this.get('icon').resourceKey = RESOURCES.WIN;
-  };
-
-  handleLoss = () => {
-    this.get('icon').resourceKey = RESOURCES.LOSS;
+  handleGameOver = (e) => {
+    const { result } = e.detail;
+    this.get('icon').resourceKey = result === RESULT.LOSS ? RESOURCES.LOSS : RESOURCES.WIN;
   };
 
   draw(ctx) {

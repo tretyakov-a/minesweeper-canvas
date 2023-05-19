@@ -53,6 +53,11 @@ export default class GameCanvas extends CachedGameObject {
     super.onMouseLeave(customMouseEventFromReal('mouseleave', e));
   };
 
+  destroy() {
+    gameState.removeEventListener('statusChange', this.handleGameStatusChange);
+    super.destroy();
+  }
+
   reset() {
     super.reset();
   }

@@ -4,10 +4,19 @@ import GameCanvas from './canvas';
 import { loadResources } from './resources';
 import gameState from './game-state';
 import { showResults } from './ui/results';
-import difficulty from './difficulty';
-import { RESULT } from './constants';
+import { DIFFICULTY } from './constants';
+import { initResults } from './ui/results';
+import { initMenu, hideMenu } from './ui/menu';
+import { initSettings, applySettings } from './ui/settings';
 
-let currentDifficulty = 'easy';
+let gameCanvas = null;
+
+const createGameCanvas = () => {
+  if (gameCanvas !== null) gameCanvas.destroy();
+  const container = document.querySelector('#game');
+  container.innerHTML = '';
+  gameCanvas = new GameCanvas(container);
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -18,21 +27,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   initLayout();
 
-  gameState.reset(difficulty[currentDifficulty]);
-  gameState.addEventListener(RESULT.WIN, () => {
+  gameState.reset(DIFFICULTY.EASY);
+  gameState.addEventListener('gameOver', (e) => {
+    const { result } = e.detail;
     showResults({
-      difficulty: currentDifficulty,
-      result: RESULT.WIN,
-      time: gameState.time,
-    });
-  });
-  gameState.addEventListener(RESULT.LOSS, () => {
-    showResults({
-      difficulty: currentDifficulty,
-      result: RESULT.LOSS,
+      difficulty: gameState.difficultyKey,
+      result: result,
       time: gameState.time,
     });
   });
 
-  const gameCanvas = new GameCanvas(document.querySelector('#game'));
+  createGameCanvas();
+
+  initResults();
+
+  initMenu({
+    onClose: () => {
+      applySettings();
+    },
+  });
+
+  initSettings({
+    onSubmit: () => {
+      hideMenu();
+    },
+    onDifficultyChange: () => {
+      createGameCanvas();
+    },
+  });
 });

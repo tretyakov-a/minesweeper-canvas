@@ -16,6 +16,11 @@ export default class Timer extends CachedGameObject {
     gameState.addEventListener('statusChange', this.handleGameStatusChange);
   }
 
+  destroy() {
+    gameState.removeEventListener('statusChange', this.handleGameStatusChange);
+    super.destroy();
+  }
+
   handleGameStatusChange = (e) => {
     const { status } = e.detail;
     if (status === STATUS.STOPPED) {

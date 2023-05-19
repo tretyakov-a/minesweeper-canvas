@@ -30,14 +30,15 @@ export default class Grid extends CachedGameObject {
   };
 
   addCells = () => {
-    const { borderWidth, cellSize } = config;
+    const { getCellSize } = config;
+    const cellSize = getCellSize(gameState.difficultyKey);
     const { cellKeys } = gameState;
     for (const cellKey of cellKeys) {
       const cellState = gameState.getCell(cellKey);
       const { x: row, y: col } = cellKey;
-      const x = borderWidth + col * borderWidth + col * cellSize;
-      const y = borderWidth + row * borderWidth + row * cellSize;
-      this.add(cellName(row, col), Cell, gameObjectOptions(x, y), cellState);
+      const x = col * cellSize;
+      const y = row * cellSize;
+      this.add(cellName(row, col), Cell, gameObjectOptions(x, y, cellSize, cellSize), cellState);
     }
   };
 
@@ -46,20 +47,17 @@ export default class Grid extends CachedGameObject {
   }
 
   reset() {
-    const { cellKeys } = gameState;
-    for (const { x: row, y: col } of cellKeys) {
-      this.remove(cellName(row, col));
+    if (!gameState.isDifficultyChanged) {
+      super.reset();
     }
-    super.reset();
-    this.addCells();
   }
 
   checkMousePosition(e, onContains) {
     const { offsetX, offsetY } = e.detail;
-    const { borderWidth, cellSize, headerHeight } = config;
-    const size = cellSize + borderWidth;
-    const row = Math.floor((offsetY - headerHeight) / size);
-    const col = Math.floor(offsetX / size);
+    const { getCellSize, headerHeight } = config;
+    const cellSize = getCellSize(gameState.difficultyKey);
+    const row = Math.floor((offsetY - headerHeight) / cellSize);
+    const col = Math.floor(offsetX / cellSize);
     const key = cellName(row, col);
     const obj = this.objects.get(key);
     if (obj !== undefined && offsetX >= obj.offset.x && offsetY >= obj.offset.y) {
