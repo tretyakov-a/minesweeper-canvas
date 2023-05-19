@@ -14,7 +14,7 @@ export default class GameObject extends EventTarget {
     this.objects = new Map();
     this.hovered = new Map();
     this.isHovered = false;
-    this.isChanged = true; // is change from last redraw
+    this.isChanged = true;
 
     // console.log(this.offset, this.width, this.height, this.constructor.name);
   }

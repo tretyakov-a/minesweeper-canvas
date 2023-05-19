@@ -64,7 +64,9 @@ export default class GameCanvas extends CachedGameObject {
 
   gameLoop = () => {
     this.update();
-    this.draw();
+    if (this.isChanged) {
+      this.draw();
+    }
     requestAnimationFrame(this.gameLoop);
   };
 

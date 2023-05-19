@@ -3,6 +3,7 @@ import flagSrc from '@src/assets/flag.svg';
 import playingSrc from '@src/assets/playing.png';
 import loseSrc from '@src/assets/loss.png';
 import winSrc from '@src/assets/win.png';
+import WebFont from 'webfontloader';
 
 export const RESOURCES = {
   MINE: 'mine',
@@ -33,5 +34,14 @@ export const loadResources = async () => {
 
   Object.keys(resources).forEach((key, i) => {
     resources[key] = images[i];
+  });
+
+  await new Promise((resolve) => {
+    WebFont.load({
+      google: {
+        families: ['Martian Mono'],
+      },
+      active: resolve,
+    });
   });
 };
