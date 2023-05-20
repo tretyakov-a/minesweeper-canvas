@@ -2,12 +2,17 @@
   <span class="results__content-title">Difficulty:</span>
   <span class="results__content-data"><%= locals.difficulty %></span>
 </div>
-
-<div class="results__content-row">
-  <span class="results__content-title">Time:</span>
-  <span class="results__content-data"><%= locals.time %> <span class="units">sec</span></span>
+<div class="results__content-block">
+  <div class="results__content-row no-underline">
+    <span class="results__content-title">Time:</span>
+    <span class="results__content-data"><%= locals.time %> <span class="units">sec</span></span>
+  </div>
+  <% if (locals.isNewBestTime) { %>
+  <div class="results__content-new-record-row">
+    New Record!
+  </div>
+  <% } %>
 </div>
-
 <div class="results__content-block">
   <div class="results__content-row no-underline">
     <div class="results__content-title">Clicks:</div>
@@ -27,12 +32,3 @@
     <span class="results__content-data"><%= locals.clicks.right %></span>
   </div>
 </div>
-
-<% if (locals.isNewBestTime) { %>
-  <div class="results__congratulation">
-    Congratulations! Its new best time on <%= locals.difficulty %> difficulty!
-    <% if (locals.oldBestTime !== 0) { %>
-    Old one is <%= locals.oldBestTime %>.
-    <% } %>
-  </div>
-<% } %>

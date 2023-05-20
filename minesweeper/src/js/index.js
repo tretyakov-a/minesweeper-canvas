@@ -3,11 +3,12 @@ import initLayout from './layout';
 import GameCanvas from './canvas';
 import { loadResources } from './resources';
 import gameState from './game-state';
-import { showResults } from './ui/results';
-import { DIFFICULTY, RESULT } from './constants';
-import { initResults } from './ui/results';
-import { initMenu, hideMenu } from './ui/menu';
-import { initSettings, applySettings } from './ui/settings';
+import { showResults, initResults } from './game-env/results';
+import { DIFFICULTY } from './constants';
+import { initMenu, hideMenu } from './game-env/menu';
+import { initSettings, applySettings } from './game-env/settings';
+import { addStats, generateStatsContent } from './game-env/statistics';
+import { getRandomStat } from './helpers';
 
 let gameCanvas = null;
 
@@ -28,14 +29,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   initLayout();
 
   gameState.reset(DIFFICULTY.EASY);
-  gameState.addEventListener('gameOver', (e) => {
-    const { result } = e.detail;
-    showResults({
-      difficulty: gameState.difficultyKey,
-      result: result,
-      time: gameState.time,
-      clicks: gameState.clicks,
-    });
+
+  gameState.addEventListener('gameOver', () => {
+    const date = Date.now();
+    const gameResult = gameState.getGameResult();
+    showResults(gameResult);
+    if (!gameState.isCustom) addStats({ ...gameResult, date });
   });
 
   createGameCanvas();
@@ -43,6 +42,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   initResults();
 
   initMenu({
+    onOpen: () => {
+      generateStatsContent();
+    },
     onClose: () => {
       applySettings();
     },

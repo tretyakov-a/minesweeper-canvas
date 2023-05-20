@@ -1,5 +1,7 @@
+import { DIFFICULTY, RESULT } from './constants';
+
 function randomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function renderNumber(n, len = 3) {
@@ -22,4 +24,17 @@ function renderTime(timeMs) {
   return `${sec}.${ms}`;
 }
 
-export { randomNumber, renderNumber, isClickOutside, renderTime };
+const getRandomStat = () => ({
+  difficulty: [DIFFICULTY.EASY, DIFFICULTY.MEDIUM, DIFFICULTY.EXPERT][randomNumber(0, 2)],
+  result: RESULT.WIN,
+  date: Date.now() - randomNumber(1000, 2000),
+  time: randomNumber(7000, 20000),
+  clicks: {
+    left: randomNumber(20, 30),
+    right: randomNumber(10, 20),
+    chords: randomNumber(10, 15),
+    wasted: randomNumber(10, 15),
+  },
+});
+
+export { randomNumber, renderNumber, isClickOutside, renderTime, getRandomStat };

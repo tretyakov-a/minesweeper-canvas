@@ -195,6 +195,7 @@ class GameState extends EventTarget {
     if (this.cellsOpenedCounter === this.cellsToOpenAmount) {
       this.status = STATUS.STOPPED;
       this.openAll();
+      this.result = RESULT.WIN;
       this.dispatchEvent(new CustomEvent('gameOver', { detail: { result: RESULT.WIN } }));
     }
   };
@@ -209,7 +210,19 @@ class GameState extends EventTarget {
     this.status = STATUS.STOPPED;
     this.openAll();
     this.highlightErrors(cellState.key);
+    this.result = RESULT.LOSS;
     this.dispatchEvent(new CustomEvent('gameOver', { detail: { result: RESULT.LOSS } }));
+  };
+
+  getGameResult = () => {
+    if (this.status !== STATUS.STOPPED) return null;
+    const { result, time, clicks } = this;
+    return {
+      difficulty: this.difficultyKey,
+      result,
+      time,
+      clicks,
+    };
   };
 
   countFlagsAround = (cellKey) =>
@@ -246,6 +259,7 @@ class GameState extends EventTarget {
     this.clicks = { ...defaultClicks };
     this.cellsToOpenAmount = 0;
     this.cellsOpenedCounter = 0;
+    this.result = null;
     this.cellKeys = [];
     this.state = this._generateInitialMatrix();
     this.status = STATUS.IDLE;
@@ -309,7 +323,7 @@ class GameState extends EventTarget {
     for (let k = 0; k < this.numOfMines; k += 1) {
       let newCellKey;
       do {
-        newCellKey = new CellKey(randomNumber(0, height), randomNumber(0, width));
+        newCellKey = new CellKey(randomNumber(0, height - 1), randomNumber(0, width - 1));
       } while (mines[newCellKey.value] || newCellKey.value === excludedCellKey.value);
       mines[newCellKey.value] = 1;
       const cell = this.getCell(newCellKey);

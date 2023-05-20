@@ -1,0 +1,18 @@
+<% if (locals.stats.length > 0) { %>
+<ul class="stats__list">
+  <li class="stats__list-item">
+    <span class="stats__date">Date</span>
+    <span class="stats__time">Time (sec)</span>
+    <span class="stats__clicks">Clicks</span>
+  </li>
+  <% locals.stats.forEach(function(stat) { %>
+    <li class="stats__list-item">
+      <span class="stats__date"><%= stat.date %></span>
+      <span class="stats__time"><%= stat.time %></span>
+      <span class="stats__clicks"><%= stat.clicks %></span>
+    </li>
+  <% }); %>
+</ul>
+<% } else { %>
+<div>There is no stats availible for this difficulty. Try to play some games</div>
+<% } %>

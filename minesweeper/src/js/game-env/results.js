@@ -1,6 +1,6 @@
 import { renderTime } from '../helpers';
 import renderModalContent from '@tpls/results/content.ejs';
-// import { findMinTime } from './statistics';
+import { findMinTime } from './statistics';
 import modalTemplate from '@tpls/results/index.ejs';
 import titleTemplate from '@tpls/results/title.ejs';
 import Modal from './modal';
@@ -16,14 +16,12 @@ const loseModificator = 'results_lose';
 const resultMessage = (text, imgSrc) => titleTemplate({ imgSrc, text });
 
 function renderContent(isWin, data) {
-  // const oldBestTime = findMinTime(difficulty);
+  const oldBestTime = findMinTime(data.difficulty);
   const { time } = data;
-  const oldBestTime = 0;
   const isNewBestTime = isWin && oldBestTime > time;
 
   return renderModalContent({
     isNewBestTime,
-    oldBestTime: oldBestTime !== Infinity ? renderTime(oldBestTime) : 0,
     ...data,
     time: renderTime(time),
   });

@@ -22,6 +22,7 @@ const toggleMenu = (tabKey) => (e) => {
   }
   isMenuOpened = !isMenuOpened;
   if (isMenuOpened) {
+    if (callbacks.onOpen) callbacks.onOpen();
     switchTab(tabKey);
     modal.show();
   } else {
@@ -29,13 +30,17 @@ const toggleMenu = (tabKey) => (e) => {
   }
 };
 
+const adjustMenuHeight = (tabKey) => {
+  const tabHeight = tabs[tabKey].offsetHeight;
+  menuWindow.style.height = `${tabHeight}px`;
+};
+
 const switchTab = (tabKey) => {
   currentTab = tabKey;
   closeTabs();
   tabs[tabKey].classList.add('show');
   requestAnimationFrame(() => {
-    const tabHeight = tabs[tabKey].offsetHeight;
-    menuWindow.style.height = `${tabHeight}px`;
+    adjustMenuHeight(tabKey);
   });
   buttons[tabKey].classList.add('active');
 };
@@ -79,4 +84,4 @@ const hideMenu = () => {
   if (modal) modal.hide();
 };
 
-export { initMenu, hideMenu };
+export { initMenu, hideMenu, adjustMenuHeight };
