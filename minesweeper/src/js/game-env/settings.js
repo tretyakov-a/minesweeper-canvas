@@ -1,7 +1,11 @@
 import gameState from '../game-state';
 import difficulty from '../difficulty';
 import { THEME } from '../constants';
+import LocalStorage from '../local-store';
 
+const STORAGE_KEY = 'minesweeper/theme';
+
+let callbacks = null;
 let form = null;
 let minesInput = null;
 let difficultySelect = null;
@@ -10,14 +14,21 @@ let themeSelect = null;
 let currentDifficulty = null;
 let numOfMines = null;
 
-//TODO: theme - load from local store
-let theme = THEME.LIGHT;
+const themeStorage = new LocalStorage(STORAGE_KEY);
+let theme = themeStorage.get() || THEME.LIGHT;
 
-let callbacks = null;
+const changeTheme = (theme) => {
+  gameState.theme = theme;
+  document.querySelector('[data-theme]').dataset.theme = theme;
+};
+
+changeTheme(theme);
 
 const handleThemeChange = (e) => {
   console.log('handleThemeChange', e.target.value);
   theme = e.target.value;
+  changeTheme(theme);
+  themeStorage.set(theme);
 };
 
 const handleDifficultyChange = (e) => {

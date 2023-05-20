@@ -1,5 +1,5 @@
 import { DIFFICULTY, RESULT } from '../constants';
-import { renderTime } from '../helpers';
+import { getRandomStat, renderTime } from '../helpers';
 import LocalStorage from '../local-store';
 import tabContent from '@tpls/menu/stats/tab-content.ejs';
 import { adjustMenuHeight } from './menu';
@@ -70,6 +70,7 @@ const processStat = (statItem) => {
 };
 
 const generateStatsContent = () => {
+  // statistics = Array.from({ length: 30 }, () => getRandomStat());
   if (statistics.length === lastTimeGeneratedAmount) return;
 
   lastTimeGeneratedAmount = statistics.length;

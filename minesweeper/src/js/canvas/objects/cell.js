@@ -6,6 +6,7 @@ import { RESOURCES } from '@src/js/resources';
 import theme from '@src/js/theme';
 import CachedGameObject from '../core/cached-game-object';
 import ImageObject from './image-object';
+import { applyBg } from '../core/utils';
 
 export default class Cell extends CachedGameObject {
   constructor(options, state) {
@@ -94,7 +95,7 @@ export default class Cell extends CachedGameObject {
 
   drawBorders(ctx) {
     const { width, height } = this;
-    ctx.strokeStyle = theme.bgColor;
+    ctx.strokeStyle = theme[gameState.theme].borderColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(width, 0);
@@ -108,7 +109,7 @@ export default class Cell extends CachedGameObject {
     const { value, isNumber, isEmpty } = this.state;
     if (!isNumber || isEmpty) return;
 
-    ctx.fillStyle = theme.cellTextColor[this.state.value];
+    ctx.fillStyle = theme[gameState.theme].cellTextColor[this.state.value];
     ctx.fillText(value, width / 2, height / 2 + 2);
   }
 
@@ -117,19 +118,18 @@ export default class Cell extends CachedGameObject {
     const { isOpened, isFlagged, isHighlighted, errorHighlighted } = this.state;
     let bgColor =
       this.isHovered && gameState.isMouseDown && !isOpened && !isFlagged
-        ? theme.cellBg.opened
+        ? theme[gameState.theme].cellBg.opened
         : this.getDrawStateBgColor();
 
     let hightlightColor = null;
-    if ((this.isHovered && !isOpened) || isHighlighted) hightlightColor = theme.cellBg.hightlight;
-    if (errorHighlighted) hightlightColor = theme.cellBg.error;
+    if ((this.isHovered && !isOpened) || isHighlighted)
+      hightlightColor = theme[gameState.theme].cellBg.hightlight;
+    if (errorHighlighted) hightlightColor = theme[gameState.theme].cellBg.error;
 
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, width, height);
+    applyBg.call(this, ctx, bgColor);
 
     if (hightlightColor !== null) {
-      ctx.fillStyle = hightlightColor;
-      ctx.fillRect(0, 0, width, height);
+      applyBg.call(this, ctx, hightlightColor);
     }
   }
 
@@ -150,13 +150,13 @@ export default class Cell extends CachedGameObject {
   getDrawStateBgColor() {
     switch (this.state.status) {
       case CellState.STATUS.CLOSED:
-        return theme.cellBg.closed;
+        return theme[gameState.theme].cellBg.closed;
       case CellState.STATUS.OPENED:
-        return theme.cellBg.opened;
+        return theme[gameState.theme].cellBg.opened;
       case CellState.STATUS.FLAGGED:
-        return theme.cellBg.flagged;
+        return theme[gameState.theme].cellBg.flagged;
       default:
-        return theme.cellBg.closed;
+        return theme[gameState.theme].cellBg.closed;
     }
   }
 }

@@ -22,7 +22,7 @@ body {
   font-family: var(--main-font);
   font-size: 16px;
   color: var(--color-text);
-  background-color: var(--color-bg-light);
+  background-color: var(--color-bg);
   display: flex;
   flex-direction: column;
   -webkit-tap-highlight-color: transparent;
@@ -50,8 +50,4 @@ ul {
 .rss-logo {
   display: block;
   width: var(--rss-logo-width);
-}
-
-#game-canvas {
-  // border: 1px solid grey;
 }

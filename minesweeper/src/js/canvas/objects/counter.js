@@ -1,6 +1,8 @@
 import config from '@src/js/config';
 import CachedGameObject from '../core/cached-game-object';
+import { applyBg } from '../core/utils';
 import theme from '@src/js/theme';
+import gameState from '@src/js/game-state';
 
 export default class Counter extends CachedGameObject {
   constructor(options) {
@@ -18,10 +20,8 @@ export default class Counter extends CachedGameObject {
 
   draw(ctx, text) {
     this.drawCached(ctx, (cacheCtx) => {
-      cacheCtx.save();
-      cacheCtx.fillStyle = theme.bgColor;
-      cacheCtx.fillRect(0, 0, this.width, this.height);
-      cacheCtx.restore();
+      applyBg.call(this, cacheCtx);
+      cacheCtx.fillStyle = theme[gameState.theme].textColor;
       cacheCtx.fillText(text, this.textOffsetX, this.height / 2);
     });
   }

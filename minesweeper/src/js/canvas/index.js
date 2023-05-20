@@ -11,6 +11,7 @@ import {
 } from './core/utils';
 import { STATUS } from '../constants';
 import CachedGameObject from './core/cached-game-object';
+import { applyBg } from './core/utils';
 
 export default class GameCanvas extends CachedGameObject {
   constructor(container) {
@@ -33,6 +34,7 @@ export default class GameCanvas extends CachedGameObject {
     canvas.addEventListener('mouseleave', this.handleCanvasMouseLeave);
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     gameState.addEventListener('statusChange', this.handleGameStatusChange);
+    gameState.addEventListener('themeChange', this.onChange);
     this.gameLoop();
   }
 
@@ -53,8 +55,13 @@ export default class GameCanvas extends CachedGameObject {
     super.onMouseLeave(customMouseEventFromReal('mouseleave', e));
   };
 
+  onChange = () => {
+    super.onChange();
+  };
+
   destroy() {
     gameState.removeEventListener('statusChange', this.handleGameStatusChange);
+    gameState.removeEventListener('themeChange', this.onChange);
     super.destroy();
   }
 
@@ -83,6 +90,7 @@ export default class GameCanvas extends CachedGameObject {
   }
 
   draw() {
+    applyBg.call(this, this.ctx);
     this.drawCached(this.ctx);
   }
 }

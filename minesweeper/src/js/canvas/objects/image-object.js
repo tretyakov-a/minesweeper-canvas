@@ -1,10 +1,11 @@
 import { resources } from '@src/js/resources';
 import GameObject from '../core/game-object';
 import Point from '../core/point';
+import gameState from '@src/js/game-state';
 
 export default class ImageObject extends GameObject {
   constructor(options, resourceKey, imgHeight, position = 'center') {
-    const { width, height } = resources[resourceKey];
+    const { width, height } = resources[gameState.theme][resourceKey];
     const flagSizeRatio = width / height;
     const imgWidth = Math.floor(imgHeight * flagSizeRatio);
     const { parent } = options;
@@ -38,7 +39,7 @@ export default class ImageObject extends GameObject {
     super.drawWithOffset(
       ctx,
       () => {
-        ctx.drawImage(resources[this.resourceKey], 0, 0, this.width, this.height);
+        ctx.drawImage(resources[gameState.theme][this.resourceKey], 0, 0, this.width, this.height);
       },
       0
     );

@@ -11,11 +11,11 @@ export default class FlagsCounter extends Counter {
     this.add('flag', ImageObject, {}, RESOURCES.FLAG, this.iconHeight, 'right');
     this.textOffsetX = 5;
 
-    gameState.addEventListener('flagsCounterChanged', this.handleFlagCounterChange);
+    gameState.addEventListener('flagsCounterChange', this.handleFlagCounterChange);
   }
 
   destroy() {
-    gameState.removeEventListener('flagsCounterChanged', this.handleFlagCounterChange);
+    gameState.removeEventListener('flagsCounterChange', this.handleFlagCounterChange);
     super.destroy();
   }
 

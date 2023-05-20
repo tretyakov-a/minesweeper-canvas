@@ -1,4 +1,4 @@
-import { STATUS, RESULT, DIFFICULTY } from '@src/js/constants';
+import { STATUS, RESULT, DIFFICULTY, THEME } from '@src/js/constants';
 import { randomNumber } from './helpers';
 import CellKey from './cell-key';
 import CellState from './cell-state';
@@ -38,6 +38,16 @@ class GameState extends EventTarget {
       targetKey: null,
       cellKeys: [],
     };
+    this.theme = THEME.LIGHT;
+  }
+
+  get theme() {
+    return this._theme;
+  }
+
+  set theme(value) {
+    this._theme = value;
+    this.dispatchEvent(new CustomEvent('themeChange'));
   }
 
   get numOfMines() {
@@ -73,7 +83,7 @@ class GameState extends EventTarget {
   set clicksCounter(value) {
     this.clicks.left = value;
     this.dispatchEvent(
-      new CustomEvent('clicksCounterChanged', { detail: { amount: this.clicks.left } })
+      new CustomEvent('clicksCounterChange', { detail: { amount: this.clicks.left } })
     );
   }
 
@@ -84,7 +94,7 @@ class GameState extends EventTarget {
   set flagsCounter(value) {
     this._flagsCounter = value;
     this.dispatchEvent(
-      new CustomEvent('flagsCounterChanged', { detail: { amount: this._flagsCounter } })
+      new CustomEvent('flagsCounterChange', { detail: { amount: this._flagsCounter } })
     );
   }
 

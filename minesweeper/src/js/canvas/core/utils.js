@@ -22,7 +22,7 @@ export const customMouseEventFromReal = (name, e) => {
 };
 
 export const ctxApplyStyles = (ctx) => {
-  ctx.fillStyle = theme.textColor;
+  ctx.fillStyle = theme[gameState.theme].textColor;
   ctx.font = '14px "Martian Mono"';
   ctx.textBaseline = 'middle';
   ctx.textAlign = 'center';
@@ -43,3 +43,12 @@ export const createCanvas = (container) => {
 
   return canvas;
 };
+
+export function applyBg(ctx, bgColor = theme[gameState.theme].primaryMediumColor) {
+  ctx.save();
+  ctx.fillStyle = theme[gameState.theme].bgColor;
+  ctx.fillRect(0, 0, this.width, this.height);
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, this.width, this.height);
+  ctx.restore();
+}

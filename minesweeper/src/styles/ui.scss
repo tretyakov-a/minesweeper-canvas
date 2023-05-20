@@ -2,7 +2,7 @@
   width: 40px;
   height: 40px;
   font-size: 1.4rem;
-  color: var(--color-text-xl);
+  color: var(--color-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,8 +16,8 @@
 
   &:hover:active,
   &.active {
-    color: var(--color-text-xl);
-    background-color: rgba(255, 255, 255, 0.6);
+    color: var(--color-text);
+    background-color: var(--color-highlight);
   }
 
   &.active {
@@ -28,7 +28,7 @@
 
   @media (hover: hover) {
     &:hover {
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: var(--color-highlight-light);
     }
   }
 }
@@ -37,12 +37,12 @@ a {
   text-decoration: none;
   transition: 0.25s;
   color: var(--color-text-xl);
-  border-bottom: 1px solid transparent;
+  border-bottom: 2px solid transparent;
   padding-bottom: 2px;
 
   @media (hover: hover) {
     &:hover {
-      border-bottom: 1px solid var(--color-text-l);
+      border-bottom: 2px solid var(--color-highlight);
     }
   }
 }

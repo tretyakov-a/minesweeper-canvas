@@ -4,20 +4,14 @@
   }
 
   &_win {
-    .results__window {
-      border: 1px solid var(--color-win);
-    }
     .results__title {
-      color: var(--color-win);
+      color: var(--color-success);
     }
   }
 
   &_lose {
-    .results__window {
-      border: 1px solid var(--color-lose);
-    }
     .results__title {
-      color: var(--color-lose);
+      color: var(--color-error);
     }
   }
 
@@ -27,7 +21,7 @@
     line-height: 24px;
     text-align: justify;
     padding: 10px;
-    border: 1px solid var(--color-win);
+    border: 1px solid var(--color-success);
     border-radius: 3px;
   }
 
@@ -39,7 +33,7 @@
     margin-bottom: 1rem;
     font-size: 1.6rem;
     line-height: 140%;
-    color: var(--color-text-xl);
+    color: var(--color-text);
   }
 
   &__title-img {
@@ -56,7 +50,7 @@
       line-height: 2rem;
       display: flex;
       flex-direction: column;
-      border-bottom: 1px solid var(--color-text-m);
+      border-bottom: 1px solid var(--color-border);
     }
 
     &-row,
@@ -65,7 +59,7 @@
       line-height: 2rem;
       display: flex;
       justify-content: space-between;
-      border-bottom: 1px solid var(--color-text-m);
+      border-bottom: 1px solid var(--color-border);
 
       &.no-underline {
         border-bottom: none;
@@ -75,7 +69,7 @@
     &-new-record-row {
       border-bottom: none;
       justify-content: flex-end;
-      color: var(--color-win);
+      color: var(--color-success);
     }
 
     &-sub-row {
@@ -85,24 +79,24 @@
 
     &-info-row {
       font-size: 0.75rem;
-      color: var(--color-text-xm);
+      color: var(--color-text-medium);
       text-align: right;
       line-height: 100%;
       margin-bottom: 0.5rem;
     }
 
     &-title {
-      color: var(--color-text-xm);
+      color: var(--color-text-medium);
     }
 
     &-data {
       text-align: right;
       font-weight: bold;
-      color: var(--color-text-xl);
+      color: var(--color-text);
 
       & .units {
         font-weight: 400;
-        color: var(--color-text-xm);
+        color: var(--color-text-medium);
       }
     }
   }

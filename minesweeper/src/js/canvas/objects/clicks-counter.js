@@ -11,11 +11,11 @@ export default class ClicksCounter extends Counter {
     this.add('mouse', ImageObject, {}, RESOURCES.MOUSE, this.iconHeight, 'left');
     this.textOffsetX = this.get('mouse').width + 5;
 
-    gameState.addEventListener('clicksCounterChanged', this.handleClicksCounterChange);
+    gameState.addEventListener('clicksCounterChange', this.handleClicksCounterChange);
   }
 
   destroy() {
-    gameState.removeEventListener('clicksCounterChanged', this.handleClicksCounterChange);
+    gameState.removeEventListener('clicksCounterChange', this.handleClicksCounterChange);
     super.destroy();
   }
 

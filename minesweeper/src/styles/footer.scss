@@ -8,7 +8,7 @@
   }
 
   &__year {
-    color: var(--color-text-xm);
+    color: var(--color-text-light);
 
     @include xs-breakpoint {
       font-size: 12px;
