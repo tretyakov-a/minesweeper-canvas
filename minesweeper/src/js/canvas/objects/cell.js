@@ -77,6 +77,7 @@ export default class Cell extends CachedGameObject {
 
   handleMouseDown = (e) => {
     if (e.detail.button === MOUSE.LEFT) {
+      gameState.clicksCounter += 1;
       gameState.highlightCells(this.state.key);
     }
     if (e.detail.button === MOUSE.RIGHT) {

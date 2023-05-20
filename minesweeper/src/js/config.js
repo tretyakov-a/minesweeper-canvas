@@ -5,7 +5,7 @@ const config = {
   flagSize: 12,
   mineSize: 14,
   headerHeight: 40,
-  counterWidth: 60,
+  counterWidth: 50,
   resetBtnSize: 30,
 };
 

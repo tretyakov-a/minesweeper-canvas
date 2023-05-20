@@ -3,6 +3,8 @@ import flagSrc from '@src/assets/flag.svg';
 import playingSrc from '@src/assets/playing.png';
 import loseSrc from '@src/assets/loss.png';
 import winSrc from '@src/assets/win.png';
+import mouseSrc from '@src/assets/hand.svg';
+import clockSrc from '@src/assets/clock.svg';
 import WebFont from 'webfontloader';
 
 export const RESOURCES = {
@@ -11,6 +13,8 @@ export const RESOURCES = {
   PLAYING: 'playing',
   LOSS: 'loss',
   WIN: 'win',
+  MOUSE: 'mouse',
+  CLOCK: 'clock',
 };
 
 export const resources = {
@@ -19,6 +23,8 @@ export const resources = {
   [RESOURCES.PLAYING]: playingSrc,
   [RESOURCES.LOSS]: loseSrc,
   [RESOURCES.WIN]: winSrc,
+  [RESOURCES.MOUSE]: mouseSrc,
+  [RESOURCES.CLOCK]: clockSrc,
 };
 
 const loadImage = (imageSrc) =>
@@ -39,7 +45,7 @@ export const loadResources = async () => {
   await new Promise((resolve) => {
     WebFont.load({
       google: {
-        families: ['Martian Mono'],
+        families: ['Martian Mono:100,300,400,700'],
       },
       active: resolve,
     });

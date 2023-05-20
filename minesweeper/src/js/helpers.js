@@ -19,7 +19,7 @@ function isClickOutside(e, classNames) {
 function renderTime(timeMs) {
   const ms = renderNumber(timeMs % 1000, 3);
   const sec = renderNumber(Math.floor(timeMs / 1000), 1);
-  return `${sec}.${ms} sec`;
+  return `${sec}.${ms}`;
 }
 
 export { randomNumber, renderNumber, isClickOutside, renderTime };

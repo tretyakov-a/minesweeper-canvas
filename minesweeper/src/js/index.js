@@ -4,7 +4,7 @@ import GameCanvas from './canvas';
 import { loadResources } from './resources';
 import gameState from './game-state';
 import { showResults } from './ui/results';
-import { DIFFICULTY } from './constants';
+import { DIFFICULTY, RESULT } from './constants';
 import { initResults } from './ui/results';
 import { initMenu, hideMenu } from './ui/menu';
 import { initSettings, applySettings } from './ui/settings';
@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       difficulty: gameState.difficultyKey,
       result: result,
       time: gameState.time,
+      clicks: gameState.clicks,
     });
   });
 

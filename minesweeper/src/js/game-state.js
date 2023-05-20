@@ -15,6 +15,13 @@ const checks = {
   bottomRight: [1, 1],
 };
 
+const defaultClicks = {
+  left: 0,
+  right: 0,
+  wasted: 0,
+  chords: 0,
+};
+
 class GameState extends EventTarget {
   constructor(difficultyKey = DIFFICULTY.EASY) {
     super();
@@ -23,6 +30,8 @@ class GameState extends EventTarget {
     this.numOfMines = difficulty[this.difficultyKey].mines;
     this.cellsToOpenAmount = 0;
     this.cellsOpenedCounter = 0;
+    this.clicks = { ...defaultClicks };
+    this.clicksCounter = 0;
 
     this.isMouseDown = false;
     this.highlighted = {
@@ -60,6 +69,17 @@ class GameState extends EventTarget {
       this.getCell(key).isHighlighted = true;
     }
   };
+
+  set clicksCounter(value) {
+    this.clicks.left = value;
+    this.dispatchEvent(
+      new CustomEvent('clicksCounterChanged', { detail: { amount: this.clicks.left } })
+    );
+  }
+
+  get clicksCounter() {
+    return this.clicks.left;
+  }
 
   set flagsCounter(value) {
     this._flagsCounter = value;
@@ -101,6 +121,8 @@ class GameState extends EventTarget {
   flagCell = (cellKey) => {
     this.startGame(cellKey);
 
+    this.clicks.right += 1;
+
     const cell = this.getCell(cellKey);
     if (cell.isOpened) {
       return this.flagsCounter;
@@ -124,8 +146,12 @@ class GameState extends EventTarget {
     if (cell.isOpened && cell.isNumber) {
       const cells = this.getHighlightedCells(cellKey);
       if (cells.length === 0 || cell.value > this.countFlagsAround(cellKey)) {
+        // wasted click
+        this.clicks.wasted += 1;
         return;
       }
+      // chord
+      this.clicks.chords += 1;
       cells.forEach(this.openCell);
       return;
     }
@@ -216,6 +242,8 @@ class GameState extends EventTarget {
       this.difficultyKey = newDifficulty;
     }
     this.flagsCounter = this.numOfMines;
+    this.clicksCounter = 0;
+    this.clicks = { ...defaultClicks };
     this.cellsToOpenAmount = 0;
     this.cellsOpenedCounter = 0;
     this.cellKeys = [];

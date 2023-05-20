@@ -11,7 +11,8 @@ export default class ImageObject extends GameObject {
 
     let offsetX = Math.floor((parent.width - imgWidth) / 2);
     let offsetY = Math.floor((parent.height - imgHeight) / 2);
-    if (position === 'right') offsetX = parent.width - imgWidth - 5;
+    if (position === 'right') offsetX = parent.width - imgWidth;
+    if (position === 'left') offsetX = 0;
 
     super({
       ...options,

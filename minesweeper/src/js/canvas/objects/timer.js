@@ -1,17 +1,17 @@
-import config from '@src/js/config';
 import { STATUS } from '@src/js/constants';
+import { RESOURCES } from '@src/js/resources';
 import gameState from '@src/js/game-state';
 import { renderNumber } from '@src/js/helpers';
-import theme from '../../theme';
-import CachedGameObject from '../core/cached-game-object';
+import Counter from './counter';
+import ImageObject from './image-object';
 
-export default class Timer extends CachedGameObject {
+export default class Timer extends Counter {
   constructor(options) {
-    const { counterWidth, headerHeight } = config;
-    super({ ...options, width: counterWidth, height: headerHeight });
-    this.applyStyles({
-      font: '18px "Martian Mono"',
-    });
+    super(options);
+
+    this.add('clock', ImageObject, {}, RESOURCES.CLOCK, this.iconHeight, 'left');
+    this.textOffsetX = this.get('clock').width + 5;
+
     this.reset();
     gameState.addEventListener('statusChange', this.handleGameStatusChange);
   }
@@ -41,7 +41,7 @@ export default class Timer extends CachedGameObject {
   }
 
   set seconds(value) {
-    this._seconds = value;
+    this._seconds = value > 999 ? 999 : value;
     this.isChanged = true;
   }
 
@@ -60,12 +60,6 @@ export default class Timer extends CachedGameObject {
   }
 
   draw(ctx) {
-    this.drawCached(ctx, (cacheCtx) => {
-      cacheCtx.save();
-      cacheCtx.fillStyle = theme.bgColor;
-      cacheCtx.fillRect(0, 0, this.width, this.height);
-      cacheCtx.restore();
-      cacheCtx.fillText(renderNumber(this.seconds), this.width / 2, this.height / 2);
-    });
+    super.draw(ctx, renderNumber(this.seconds));
   }
 }

@@ -5,7 +5,27 @@
 
 <div class="results__content-row">
   <span class="results__content-title">Time:</span>
-  <span class="results__content-data"><%= locals.time %></span>
+  <span class="results__content-data"><%= locals.time %> <span class="units">sec</span></span>
+</div>
+
+<div class="results__content-block">
+  <div class="results__content-row no-underline">
+    <div class="results__content-title">Clicks:</div>
+  </div>
+  <div class="results__content-sub-row">
+    <span class="results__content-title">Left:</span>
+    <span class="results__content-data">
+      <%= locals.clicks.left %>
+    </span>
+  </div>
+  <div class="results__content-info-row">
+    (<span><%= locals.clicks.chords %> chords</span>,
+    <span><%= locals.clicks.wasted %> wasted</span>)
+  </div>
+  <div class="results__content-sub-row">
+    <span class="results__content-title">Right:</span>
+    <span class="results__content-data"><%= locals.clicks.right %></span>
+  </div>
 </div>
 
 <% if (locals.isNewBestTime) { %>

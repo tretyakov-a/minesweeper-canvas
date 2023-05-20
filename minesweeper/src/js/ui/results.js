@@ -15,25 +15,26 @@ const loseModificator = 'results_lose';
 
 const resultMessage = (text, imgSrc) => titleTemplate({ imgSrc, text });
 
-function renderContent(isWin, difficulty, time) {
+function renderContent(isWin, data) {
   // const oldBestTime = findMinTime(difficulty);
+  const { time } = data;
   const oldBestTime = 0;
   const isNewBestTime = isWin && oldBestTime > time;
 
   return renderModalContent({
     isNewBestTime,
     oldBestTime: oldBestTime !== Infinity ? renderTime(oldBestTime) : 0,
-    difficulty,
+    ...data,
     time: renderTime(time),
   });
 }
 
-function showResults({ difficulty, result, time }) {
-  const isWin = result === 'win';
+function showResults(results) {
+  const isWin = results.result === 'win';
   title.innerHTML = isWin
     ? resultMessage('Win!', resources.win.src)
     : resultMessage('Loss!', resources.loss.src);
-  content.innerHTML = renderContent(isWin, difficulty, time);
+  content.innerHTML = renderContent(isWin, results);
   const resultModificator = isWin ? winModificator : loseModificator;
   modal.removeMods([winModificator, loseModificator]);
   modal.show([resultModificator]);
