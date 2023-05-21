@@ -9,10 +9,10 @@ export default {
     textColor: 'rgba(0, 0, 0, 0.87)',
     cellBg: {
       opened: '#f0f2f5',
-      closed: 'rgba(255, 122, 69, 0.6)',
-      flagged: 'rgba(255, 122, 69, 0.6)',
+      closed: 'rgba(38, 115, 221, 0.5)',
+      flagged: 'rgba(38, 115, 221, 0.5)',
       error: 'rgba(238, 44, 74, 0.5)',
-      hightlight: 'rgba(255, 122, 69, 0.38)',
+      hightlight: 'rgba(38, 115, 221, 0.38)',
     },
     cellTextColor: [
       '#000000',
