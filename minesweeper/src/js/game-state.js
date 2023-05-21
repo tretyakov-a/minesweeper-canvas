@@ -257,14 +257,11 @@ class GameState extends EventTarget {
     this._generateNumbers();
   };
 
-  reset = (newDifficulty, isCustom = false) => {
-    this.isCustom = isCustom;
-    this.isDifficultyChanged = false;
-    if (newDifficulty !== undefined) {
-      this.isDifficultyChanged = this.difficultyKey !== newDifficulty;
-      this.difficultyKey = newDifficulty;
-    }
-    this.flagsCounter = this.numOfMines;
+  reset = (newDifficulty = this.difficultyKey, numOfMines = this.numOfMines) => {
+    this.numOfMines = numOfMines;
+    this.isDifficultyChanged = this.difficultyKey !== newDifficulty;
+    this.difficultyKey = newDifficulty;
+    this.isCustom = difficulty[newDifficulty].mines !== this.numOfMines;
     this.clicksCounter = 0;
     this.clicks = { ...defaultClicks };
     this.cellsToOpenAmount = 0;

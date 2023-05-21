@@ -43,16 +43,11 @@ const handleDifficultyChange = (e) => {
 const handleFormSubmit = (e) => {
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
-  numOfMines = formData.get('mines');
+  numOfMines = Number(formData.get('mines'));
   theme = formData.get('theme');
 
-  const defaultMines = difficulty[currentDifficulty].mines;
-
-  const isCustom = numOfMines !== defaultMines;
-
-  if (currentDifficulty !== gameState.difficultyKey || isCustom) {
-    gameState.reset(currentDifficulty, isCustom);
-    gameState.numOfMines = numOfMines;
+  if (currentDifficulty !== gameState.difficultyKey || gameState.numOfMines !== numOfMines) {
+    gameState.reset(currentDifficulty, numOfMines);
     callbacks.onDifficultyChange();
   }
 
