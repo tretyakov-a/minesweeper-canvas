@@ -4,8 +4,8 @@ import { findMinTime } from './statistics';
 import modalTemplate from '@tpls/results/index.ejs';
 import titleTemplate from '@tpls/results/title.ejs';
 import Modal from './modal';
+import { RESOURCES } from '../constants';
 import { resources } from '../resources';
-import gameState from '../game-state';
 
 let modal = null;
 let title = null;
@@ -31,8 +31,8 @@ function renderContent(isWin, data) {
 function showResults(results) {
   const isWin = results.result === 'win';
   title.innerHTML = isWin
-    ? resultMessage('Win!', resources[gameState.theme].win.src)
-    : resultMessage('Loss!', resources[gameState.theme].loss.src);
+    ? resultMessage('Win!', resources.getImage(RESOURCES.WIN_ICON).src)
+    : resultMessage('Loss!', resources.getImage(RESOURCES.LOSS_ICON).src);
   content.innerHTML = renderContent(isWin, results);
   const resultModificator = isWin ? winModificator : loseModificator;
   modal.removeMods([winModificator, loseModificator]);

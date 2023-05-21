@@ -1,5 +1,5 @@
 import { STATUS } from '@src/js/constants';
-import { RESOURCES } from '@src/js/resources';
+import { RESOURCES } from '@src/js/constants';
 import gameState from '@src/js/game-state';
 import { renderNumber } from '@src/js/helpers';
 import Counter from './counter';

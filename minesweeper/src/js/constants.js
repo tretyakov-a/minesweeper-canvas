@@ -24,3 +24,19 @@ export const THEME = {
   DARK: 'dark',
   LIGHT: 'light',
 };
+
+export const RESOURCES = {
+  MINE: 'mine',
+  FLAG: 'flag',
+  PLAYING_ICON: 'playing',
+  LOSS_ICON: 'loss',
+  WIN_ICON: 'win',
+  MOUSE: 'mouse',
+  CLOCK: 'clock',
+
+  SOUND: {
+    OPEN: 'open',
+    CHORD: 'chord',
+    BOOM: 'boom',
+  },
+};

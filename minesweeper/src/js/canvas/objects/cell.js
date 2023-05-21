@@ -2,7 +2,7 @@ import config from '@src/js/config';
 import gameState from '@src/js/game-state';
 import CellState from '@src/js/cell-state';
 import { MOUSE, STATUS } from '@src/js/constants';
-import { RESOURCES } from '@src/js/resources';
+import { RESOURCES } from '@src/js/constants';
 import theme from '@src/js/theme';
 import CachedGameObject from '../core/cached-game-object';
 import ImageObject from './image-object';

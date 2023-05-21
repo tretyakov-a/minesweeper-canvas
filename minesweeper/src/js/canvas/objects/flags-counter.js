@@ -1,6 +1,6 @@
 import gameState from '@src/js/game-state';
 import { renderNumber } from '@src/js/helpers';
-import { RESOURCES } from '@src/js/resources';
+import { RESOURCES } from '@src/js/constants';
 import ImageObject from './image-object';
 import Counter from './counter';
 

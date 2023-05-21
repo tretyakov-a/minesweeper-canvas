@@ -28,6 +28,14 @@ module.exports = (env = { mode: 'developement' }) => {
         template: './templates/index.ejs',
         filename: 'index.html',
       }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, 'src/assets/resources'),
+            to: 'resources',
+          },
+        ],
+      }),
       new RemovePlugin({
         after: {
           test: [

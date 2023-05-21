@@ -1,8 +1,9 @@
-import { STATUS, RESULT, DIFFICULTY, THEME } from '@src/js/constants';
+import { STATUS, RESULT, DIFFICULTY, THEME, RESOURCES } from '@src/js/constants';
 import { randomNumber } from './helpers';
 import CellKey from './cell-key';
 import CellState from './cell-state';
 import difficulty from './difficulty';
+import { resources } from './resources';
 
 const checks = {
   topLeft: [-1, -1],
@@ -147,7 +148,10 @@ class GameState extends EventTarget {
     return this.flagsCounter;
   };
 
-  openCell = (cellKey) => {
+  openCell = (cellKey, isMain = false) => {
+    let sound = null;
+    let isChord = false;
+
     const cell = this.getCell(cellKey);
     if (cell.isFlagged || (cell.isOpened && (cell.isMined || cell.isEmpty))) {
       return;
@@ -162,20 +166,32 @@ class GameState extends EventTarget {
       }
       // chord
       this.clicks.chords += 1;
-      cells.forEach(this.openCell);
+      sound = cells.length > 2 ? RESOURCES.SOUND.CHORD : RESOURCES.SOUND.OPEN;
+      isChord = true;
+      cells.forEach((cellKey) => this.openCell(cellKey, true));
       return;
     }
+
+    if (isMain && !isChord) sound = RESOURCES.SOUND.OPEN;
 
     cell.status = CellState.STATUS.OPENED;
 
     if (cell.isEmpty) {
+      sound = RESOURCES.SOUND.CHORD;
       this._revealEmptySpace(cellKey);
+    }
+    if (cell.isMined) {
+      sound = RESOURCES.SOUND.BOOM;
+    }
+
+    if (isMain && sound !== null) {
+      resources.getSound(sound).play();
     }
   };
 
   revealCell = (cellKey) => {
     this.startGame(cellKey);
-    this.openCell(cellKey);
+    this.openCell(cellKey, true);
   };
 
   openAll = () => {

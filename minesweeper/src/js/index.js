@@ -1,7 +1,7 @@
 import '../styles/index.scss';
 import initLayout from './layout';
 import GameCanvas from './canvas';
-import { loadResources } from './resources';
+import { resources } from './resources';
 import gameState from './game-state';
 import { showResults, initResults } from './game-env/results';
 import { DIFFICULTY } from './constants';
@@ -21,7 +21,7 @@ const createGameCanvas = () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    await loadResources();
+    await resources.load();
   } catch (err) {
     return console.log(`Failed to load resource: ${err.message}`);
   }
