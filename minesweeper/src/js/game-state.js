@@ -145,12 +145,13 @@ class GameState extends EventTarget {
       this.flagsCounter -= 1;
       cell.status = CellState.STATUS.FLAGGED;
     }
+
+    resources.playSound(RESOURCES.SOUND.FLAG);
     return this.flagsCounter;
   };
 
-  openCell = (cellKey, isMain = false) => {
+  openCell = (cellKey, isSoundPlayed = false) => {
     let sound = null;
-    let isChord = false;
 
     const cell = this.getCell(cellKey);
     if (cell.isFlagged || (cell.isOpened && (cell.isMined || cell.isEmpty))) {
@@ -167,12 +168,12 @@ class GameState extends EventTarget {
       // chord
       this.clicks.chords += 1;
       sound = cells.length > 2 ? RESOURCES.SOUND.CHORD : RESOURCES.SOUND.OPEN;
-      isChord = true;
       cells.forEach((cellKey) => this.openCell(cellKey, true));
+      if (!isSoundPlayed) resources.playSound(sound);
       return;
     }
 
-    if (isMain && !isChord) sound = RESOURCES.SOUND.OPEN;
+    sound = RESOURCES.SOUND.OPEN;
 
     cell.status = CellState.STATUS.OPENED;
 
@@ -184,14 +185,14 @@ class GameState extends EventTarget {
       sound = RESOURCES.SOUND.BOOM;
     }
 
-    if (isMain && sound !== null) {
-      resources.getSound(sound).play();
+    if (sound !== null && (!isSoundPlayed || cell.isMined)) {
+      resources.playSound(sound);
     }
   };
 
   revealCell = (cellKey) => {
     this.startGame(cellKey);
-    this.openCell(cellKey, true);
+    this.openCell(cellKey);
   };
 
   openAll = () => {

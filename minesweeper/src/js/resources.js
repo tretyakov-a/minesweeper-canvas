@@ -1,6 +1,7 @@
 import WebFont from 'webfontloader';
 import { THEME, RESOURCES } from './constants';
 import gameState from './game-state';
+import * as volume from './game-env/volume';
 
 class Resources {
   constructor() {
@@ -24,6 +25,12 @@ class Resources {
 
   getSound(key) {
     return this.sounds.get(key);
+  }
+
+  playSound(key) {
+    const sound = new Audio(this.getSound(key).src);
+    sound.volume = volume.value;
+    sound.play();
   }
 
   load = async () => {
@@ -72,9 +79,12 @@ resources.addImage(RESOURCES.WIN_ICON, 'win.png');
 resources.addImage(RESOURCES.MOUSE, 'hand.svg');
 resources.addImage(RESOURCES.CLOCK, 'clock.svg');
 
-resources.addSound(RESOURCES.SOUND.OPEN, 'open.wav');
-resources.addSound(RESOURCES.SOUND.CHORD, 'chord.wav');
+resources.addSound(RESOURCES.SOUND.OPEN, 'open.mp3');
+resources.addSound(RESOURCES.SOUND.CHORD, 'chord.mp3');
 resources.addSound(RESOURCES.SOUND.BOOM, 'boom.mp3');
+resources.addSound(RESOURCES.SOUND.WIN, 'win.mp3');
+resources.addSound(RESOURCES.SOUND.LOSS, 'loss.mp3');
+resources.addSound(RESOURCES.SOUND.FLAG, 'flag.mp3');
 
 const loadSound = (soundSrc) =>
   new Promise((resolve, reject) => {

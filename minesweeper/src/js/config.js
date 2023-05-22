@@ -7,6 +7,7 @@ const config = {
   headerHeight: 40,
   counterWidth: 50,
   resetBtnSize: 30,
+  gameOverModalDelay: 1000,
 };
 
 export default config;

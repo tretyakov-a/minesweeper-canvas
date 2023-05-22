@@ -28,12 +28,21 @@
     input {
       color: var(--color-text);
       height: 32px;
-      background-color: var(--color-panel-bg);
+      background-color: var(--color-primary-medium);
       border: 1px solid var(--color-border);
     }
 
     select {
       padding: 0 0.5rem;
+
+      option {
+        background-color: var(--color-panel-bg);
+        margin: 0 2px;
+
+        &:checked {
+          background-color: var(--color-highlight-medium);
+        }
+      }
     }
 
     .mines-input {

@@ -1,6 +1,6 @@
 import config from '@src/js/config';
 import gameState from '@src/js/game-state';
-import { RESOURCES } from '@src/js/constants';
+import { RESOURCES, STATUS } from '@src/js/constants';
 import ImageObject from './image-object';
 import theme from '../../theme';
 import CachedGameObject from '../core/cached-game-object';
@@ -13,6 +13,8 @@ export default class ResetBtn extends CachedGameObject {
     super({ ...options, width: resetBtnSize, height: resetBtnSize });
 
     this.add('icon', ImageObject, {}, RESOURCES.PLAYING_ICON, resetBtnSize * 0.8);
+
+    this.isBlocked = false;
 
     gameState.addEventListener('gameOver', this.handleGameOver);
     this.addEventListener('mousedown', this.handleMouseDown);
@@ -29,6 +31,7 @@ export default class ResetBtn extends CachedGameObject {
   }
 
   handleMouseDown = () => {
+    if (this.isBlocked) return;
     document.addEventListener('mouseup', this.handleMouseUp);
   };
 
@@ -41,6 +44,11 @@ export default class ResetBtn extends CachedGameObject {
     const { result } = e.detail;
     this.get('icon').resourceKey =
       result === RESULT.LOSS ? RESOURCES.LOSS_ICON : RESOURCES.WIN_ICON;
+
+    this.isBlocked = true;
+    setTimeout(() => {
+      this.isBlocked = false;
+    }, config.gameOverModalDelay);
   };
 
   draw(ctx) {

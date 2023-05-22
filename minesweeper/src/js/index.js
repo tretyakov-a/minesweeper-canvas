@@ -4,11 +4,12 @@ import GameCanvas from './canvas';
 import { resources } from './resources';
 import gameState from './game-state';
 import { showResults, initResults } from './game-env/results';
-import { DIFFICULTY } from './constants';
+import { DIFFICULTY, RESOURCES, RESULT } from './constants';
 import { initMenu, hideMenu } from './game-env/menu';
 import { initSettings, applySettings } from './game-env/settings';
 import { addStats, generateStatsContent } from './game-env/statistics';
 import { getRandomStat } from './helpers';
+import config from './config';
 
 let gameCanvas = null;
 
@@ -33,8 +34,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   gameState.addEventListener('gameOver', () => {
     const date = Date.now();
     const gameResult = gameState.getGameResult();
-    showResults(gameResult);
-    if (!gameState.isCustom) addStats({ ...gameResult, date });
+
+    const gameOverSound =
+      gameResult.result === RESULT.WIN ? RESOURCES.SOUND.WIN : RESOURCES.SOUND.LOSS;
+
+    setTimeout(() => {
+      resources.playSound(gameOverSound);
+      showResults(gameResult);
+      if (!gameState.isCustom) addStats({ ...gameResult, date });
+    }, config.gameOverModalDelay);
   });
 
   createGameCanvas();

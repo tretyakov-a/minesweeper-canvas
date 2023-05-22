@@ -2,6 +2,7 @@ import gameState from '../game-state';
 import difficulty from '../difficulty';
 import { THEME } from '../constants';
 import LocalStorage from '../local-store';
+import * as volume from './volume';
 
 const STORAGE_KEY = 'minesweeper/theme';
 
@@ -69,6 +70,7 @@ export const initSettings = (args) => {
   form.addEventListener('submit', handleFormSubmit);
 
   applySettings();
+  volume.init();
 };
 
 export const applySettings = () => {

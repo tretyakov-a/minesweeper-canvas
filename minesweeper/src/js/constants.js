@@ -38,5 +38,8 @@ export const RESOURCES = {
     OPEN: 'open',
     CHORD: 'chord',
     BOOM: 'boom',
+    WIN: 'win',
+    LOSS: 'loss',
+    FLAG: 'flag',
   },
 };
