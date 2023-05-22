@@ -6,6 +6,7 @@ import titleTemplate from '@tpls/results/title.ejs';
 import Modal from './modal';
 import { RESOURCES } from '../constants';
 import { resources } from '../resources';
+import gameState from '../game-state';
 
 let modal = null;
 let title = null;
@@ -19,9 +20,11 @@ const resultMessage = (text, imgSrc) => titleTemplate({ imgSrc, text });
 function renderContent(isWin, data) {
   const oldBestTime = findMinTime(data.difficulty);
   const { time } = data;
-  const isNewBestTime = isWin && oldBestTime > time;
+  const isNewBestTime = !gameState.isCustom && isWin && oldBestTime > time;
+  const difference = oldBestTime - time;
 
   return renderModalContent({
+    difference: difference === Infinity ? null : renderTime(oldBestTime - time),
     isNewBestTime,
     ...data,
     time: renderTime(time),

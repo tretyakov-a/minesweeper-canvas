@@ -9,7 +9,7 @@
   </div>
   <% if (locals.isNewBestTime) { %>
   <div class="results__content-new-record-row">
-    New Record!
+    New Record! <% if (locals.difference !== null) { %><span>(-<%= locals.difference %> sec)</span><% } %>
   </div>
   <% } %>
 </div>

@@ -54,8 +54,7 @@
     }
 
     &-row,
-    &-sub-row,
-    &-new-record-row {
+    &-sub-row {
       line-height: 2rem;
       display: flex;
       justify-content: space-between;
@@ -66,23 +65,21 @@
       }
     }
 
-    &-new-record-row {
-      border-bottom: none;
-      justify-content: flex-end;
-      color: var(--color-success);
-    }
-
     &-sub-row {
       border-bottom: none;
       padding-left: 0.5rem;
     }
 
-    &-info-row {
+    &-info-row,
+    &-new-record-row {
       font-size: 0.75rem;
       color: var(--color-text-medium);
       text-align: right;
-      line-height: 100%;
-      margin-bottom: 0.5rem;
+      line-height: 200%;
+    }
+
+    &-new-record-row {
+      color: var(--color-success);
     }
 
     &-title {
