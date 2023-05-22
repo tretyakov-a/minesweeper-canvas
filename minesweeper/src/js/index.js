@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       createGameCanvas();
     }
     hideMenu();
+    document.querySelector('#game').className = e.detail.difficultyKey;
   });
   settings.init();
 

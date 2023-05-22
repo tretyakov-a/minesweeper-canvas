@@ -19,6 +19,7 @@
 
 [data-theme="light"] {
   --color-primary: #2673dd;
+  --color-primary-38: rgba(38, 115, 221, 0.38);
   --color-primary-medium: rgba(38, 115, 221, 0.2);
   --color-primary-light: rgba(38, 115, 221, 0.05);
   --color-success: #44cc77;
@@ -42,6 +43,7 @@
 
 [data-theme="dark"] {
   --color-primary: #2673dd;
+  --color-primary-38: rgba(38, 115, 221, 0.38);
   --color-primary-medium: rgba(38, 115, 221, 0.3);
   --color-primary-light: rgba(38, 115, 221, 0.14);
   --color-success: #309053;

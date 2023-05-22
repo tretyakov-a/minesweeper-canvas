@@ -40,6 +40,7 @@ export default class Modal {
     if (hideOnClickOutside) {
       document.addEventListener('click', this.handleDocumentClick);
     }
+    document.body.classList.add('no-y-scroll');
   };
 
   hide = () => {
@@ -57,6 +58,7 @@ export default class Modal {
     }
     setTimeout(() => {
       container.classList.remove(mods.hide);
+      document.body.classList.remove('no-y-scroll');
     }, transition);
   };
 }
