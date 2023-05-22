@@ -48,7 +48,7 @@ const findMinTime = (difficulty) => {
 
 const addStats = (gameResult) => {
   if (gameResult.result === RESULT.WIN) {
-    statistics.push(gameResult);
+    statistics.push({ ...gameResult });
     storage.set(statistics.slice(-NUMBER_OF_SAVED));
   }
 };
