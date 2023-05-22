@@ -21,18 +21,19 @@ export default class CachedGameObject extends GameObject {
     });
   }
 
-  drawDescendants(ctx) {
+  drawDescendants(ctx, redraw) {
     for (const obj of this.objects.values()) {
-      if (obj.isChanged) {
+      if (obj.isChanged || redraw) {
         obj.draw(ctx);
       }
+      // obj.draw(ctx);
     }
   }
 
-  drawCached(ctx, draw) {
+  drawCached(ctx, draw, redraw = false) {
     if (this.isChanged) {
       if (draw) draw(this.cacheCtx);
-      this.drawDescendants(this.cacheCtx);
+      this.drawDescendants(this.cacheCtx, redraw);
       this.isChanged = false;
     }
 

@@ -33,6 +33,7 @@ export const RESOURCES = {
   WIN_ICON: 'win',
   MOUSE: 'mouse',
   CLOCK: 'clock',
+  EXPLOSION: 'explosion',
 
   SOUND: {
     OPEN: 'open',

@@ -142,9 +142,9 @@ export default class Cell extends CachedGameObject {
   }
 
   draw(ctx) {
-    this.drawCached(ctx, (cachedContext) => {
-      this.drawCell(cachedContext);
-      super.draw(cachedContext);
+    this.drawCached(ctx, (cacheCtx) => {
+      this.drawCell(cacheCtx);
+      super.draw(cacheCtx);
     });
   }
 

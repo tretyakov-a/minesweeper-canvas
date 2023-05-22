@@ -228,7 +228,9 @@ class GameState extends EventTarget {
     this.openAllMines();
     this.highlightErrors(cellState.key);
     this.result = RESULT.LOSS;
-    this.dispatchEvent(new CustomEvent('gameOver', { detail: { result: RESULT.LOSS } }));
+    this.dispatchEvent(
+      new CustomEvent('gameOver', { detail: { result: RESULT.LOSS, mine: cellState.key } })
+    );
   };
 
   getGameResult = () => {

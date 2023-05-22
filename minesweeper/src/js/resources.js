@@ -78,6 +78,7 @@ resources.addImage(RESOURCES.LOSS_ICON, 'loss.png');
 resources.addImage(RESOURCES.WIN_ICON, 'win.png');
 resources.addImage(RESOURCES.MOUSE, 'hand.svg');
 resources.addImage(RESOURCES.CLOCK, 'clock.svg');
+resources.addImage(RESOURCES.EXPLOSION, 'explosion3.png');
 
 resources.addSound(RESOURCES.SOUND.OPEN, 'open.mp3');
 resources.addSound(RESOURCES.SOUND.CHORD, 'chord.mp3');

@@ -1,7 +1,6 @@
 import { resources } from '@src/js/resources';
 import GameObject from '../core/game-object';
 import Point from '../core/point';
-import gameState from '@src/js/game-state';
 
 export default class ImageObject extends GameObject {
   constructor(options, resourceKey, imgHeight, position = 'center') {

@@ -4,7 +4,8 @@ import { customMouseEvent } from './utils';
 export default class GameObject extends EventTarget {
   constructor(options) {
     super();
-    const { offset, width = 0, height = 0, parent } = options;
+    const { offset, width = 0, height = 0, parent, ctx } = options;
+    this.ctx = ctx;
     this.parent = parent;
     this.offset = offset;
     this.width = width;
@@ -63,7 +64,7 @@ export default class GameObject extends EventTarget {
     this.objects.set(
       key,
       new ObjectConstructor(
-        { offset: new Point(x + offsetX, y + offsetY), width, height, parent: this },
+        { offset: new Point(x + offsetX, y + offsetY), width, height, parent: this, ctx: this.ctx },
         ...rest
       )
     );

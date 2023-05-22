@@ -44,7 +44,7 @@ export default class Header extends CachedGameObject {
       ),
       timerWidth
     );
-    this.add('clicksCounter', ClicksCounter, gameObjectOptions(5, 0));
+    this.add('clicksCounter', ClicksCounter, gameObjectOptions(5, 0, this.width * 0.2));
     this.add('flagsCounter', FlagsCounter, gameObjectOptions(this.width - counterWidth - 5, 0));
   }
 

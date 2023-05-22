@@ -1,9 +1,12 @@
 import config from '@src/js/config';
 import gameState from '@src/js/game-state';
-import { MOUSE } from '@src/js/constants';
+import { MOUSE, RESOURCES, RESULT } from '@src/js/constants';
 import Cell from './cell';
 import { gameObjectOptions } from '../core/utils';
 import CachedGameObject from '../core/cached-game-object';
+import Explosion from './explosion';
+import { resources } from '@src/js/resources';
+import Point from '../core/point';
 
 const cellName = (row, col) => `cell/${row}-${col}`;
 
@@ -12,9 +15,37 @@ export default class Grid extends CachedGameObject {
     super(...props);
 
     this.addCells();
+    this.add(
+      'explosion',
+      Explosion,
+      gameObjectOptions(50, 50),
+      resources.getImage(RESOURCES.EXPLOSION),
+      new Point(4, 4)
+    );
     this.addEventListener('mousedown', this.handleMouseDown);
     this.setCursor('pointer');
+    gameState.addEventListener('gameOver', this.handleGameOver);
   }
+
+  destroy() {
+    gameState.removeEventListener('gameOver', this.handleGameOver);
+    super.destroy();
+  }
+
+  handleGameOver = (e) => {
+    const { result } = e.detail;
+    if (result === RESULT.LOSS) {
+      const { mine } = e.detail;
+      const {
+        offset: { x, y },
+        width,
+        height,
+      } = this.get(cellName(mine.x, mine.y));
+      const exp = this.get('explosion');
+
+      exp.play(new Point(x - (exp.width - width) / 2, y - (exp.height - height) / 2));
+    }
+  };
 
   handleMouseDown = (e) => {
     gameState.isMouseDown = e.detail.button === MOUSE.LEFT;
@@ -42,8 +73,8 @@ export default class Grid extends CachedGameObject {
     }
   };
 
-  update() {
-    return true;
+  update(deltaTime) {
+    this.isChange = this.get('explosion').update(deltaTime);
   }
 
   reset() {
@@ -68,6 +99,6 @@ export default class Grid extends CachedGameObject {
   }
 
   draw(ctx) {
-    this.drawCached(ctx);
+    this.drawCached(ctx, null, this.isChanged);
   }
 }
