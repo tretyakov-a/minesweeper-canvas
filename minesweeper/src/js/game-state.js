@@ -39,17 +39,7 @@ class GameState extends EventTarget {
       targetKey: null,
       cellKeys: [],
     };
-    // this.theme = THEME.LIGHT;
   }
-
-  // get theme() {
-  //   return this._theme;
-  // }
-
-  // set theme(value) {
-  //   this._theme = value;
-  //   this.dispatchEvent(new CustomEvent('themeChange'));
-  // }
 
   get numOfMines() {
     return this._numOfMines;
@@ -195,12 +185,12 @@ class GameState extends EventTarget {
     this.openCell(cellKey);
   };
 
-  openAll = () => {
+  openAllMines = () => {
     for (let rowIdx = 0; rowIdx < this.state.length; rowIdx += 1) {
       for (let colIdx = 0; colIdx < this.state[rowIdx].length; colIdx += 1) {
         const cellKey = new CellKey(rowIdx, colIdx);
         const cell = this.getCell(cellKey);
-        if (!cell.isFlagged && cell.isClosed) {
+        if (cell.isMined && cell.isClosed) {
           cell.status = CellState.STATUS.OPENED;
         }
       }
@@ -221,7 +211,7 @@ class GameState extends EventTarget {
     this.cellsOpenedCounter += 1;
     if (this.cellsOpenedCounter === this.cellsToOpenAmount) {
       this.status = STATUS.STOPPED;
-      this.openAll();
+      this.openAllMines();
       this.result = RESULT.WIN;
       this.dispatchEvent(new CustomEvent('gameOver', { detail: { result: RESULT.WIN } }));
     }
@@ -235,7 +225,7 @@ class GameState extends EventTarget {
 
   handleLose = (cellState) => {
     this.status = STATUS.STOPPED;
-    this.openAll();
+    this.openAllMines();
     this.highlightErrors(cellState.key);
     this.result = RESULT.LOSS;
     this.dispatchEvent(new CustomEvent('gameOver', { detail: { result: RESULT.LOSS } }));
