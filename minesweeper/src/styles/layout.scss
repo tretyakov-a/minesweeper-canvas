@@ -31,4 +31,10 @@
   overflow: hidden;
   border-radius: 5px;
   padding: 5px;
+
+  @media only screen and (max-width: 520px) {
+    width: 100%;
+    padding: 5px 0;
+    border-radius: 0;
+  }
 }
