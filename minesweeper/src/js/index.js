@@ -6,9 +6,8 @@ import gameState from './game-state';
 import { showResults, initResults } from './game-env/results';
 import { DIFFICULTY, RESOURCES, RESULT } from './constants';
 import { initMenu, hideMenu } from './game-env/menu';
-import { initSettings, applySettings } from './game-env/settings';
+import { settings } from './game-env/settings';
 import { addStats, generateStatsContent } from './game-env/statistics';
-import { getRandomStat } from './helpers';
 import config from './config';
 
 let gameCanvas = null;
@@ -45,25 +44,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, config.gameOverModalDelay);
   });
 
-  createGameCanvas();
-
   initResults();
 
   initMenu({
     onOpen: () => {
       generateStatsContent();
     },
-    onClose: () => {
-      applySettings();
-    },
   });
 
-  initSettings({
-    onSubmit: () => {
-      hideMenu();
-    },
-    onDifficultyChange: () => {
+  settings.addEventListener('difficultyChange', (e) => {
+    if (gameState.handleDifficultyChange(e.detail)) {
       createGameCanvas();
-    },
+    }
+    hideMenu();
   });
+  settings.init();
+
+  createGameCanvas();
 });

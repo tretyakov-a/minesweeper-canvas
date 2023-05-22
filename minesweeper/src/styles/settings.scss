@@ -60,9 +60,14 @@
     }
   }
 
+  &__delimiter {
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
   &__button {
     font-size: 1rem;
-    margin-top: 1rem;
     align-self: center;
     width: auto;
     background-color: var(--color-primary-medium);

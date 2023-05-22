@@ -1,6 +1,7 @@
 import theme from '@src/js/theme';
 import config from '@src/js/config';
-import gameState from '@src/js/game-state';
+import { settings } from '@src/js/game-env/settings';
+// import gameState from '@src/js/game-state';
 import difficulty from '@src/js/difficulty';
 
 export const gameObjectOptions = (offsetX, offsetY, width = 0, height = 0) => {
@@ -22,7 +23,7 @@ export const customMouseEventFromReal = (name, e) => {
 };
 
 export const ctxApplyStyles = (ctx) => {
-  ctx.fillStyle = theme[gameState.theme].textColor;
+  ctx.fillStyle = theme[settings.theme].textColor;
   ctx.font = '14px "Martian Mono"';
   ctx.textBaseline = 'middle';
   ctx.textAlign = 'center';
@@ -30,8 +31,8 @@ export const ctxApplyStyles = (ctx) => {
 
 export const createCanvas = (container) => {
   const { headerHeight, getCellSize } = config;
-  const cellSize = getCellSize(gameState.difficultyKey);
-  const { width, height } = difficulty[gameState.difficultyKey];
+  const cellSize = getCellSize(settings.difficultyKey);
+  const { width, height } = difficulty[settings.difficultyKey];
   const canvas = document.createElement('canvas');
   if (!canvas.getContext) {
     throw new Error('Canvas is unsupported');
@@ -44,9 +45,9 @@ export const createCanvas = (container) => {
   return canvas;
 };
 
-export function applyBg(ctx, bgColor = theme[gameState.theme].primaryMediumColor) {
+export function applyBg(ctx, bgColor = theme[settings.theme].primaryMediumColor) {
   ctx.save();
-  ctx.fillStyle = theme[gameState.theme].bgColor;
+  ctx.fillStyle = theme[settings.theme].bgColor;
   ctx.fillRect(0, 0, this.width, this.height);
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, this.width, this.height);

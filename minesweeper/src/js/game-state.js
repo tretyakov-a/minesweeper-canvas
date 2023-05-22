@@ -1,4 +1,4 @@
-import { STATUS, RESULT, DIFFICULTY, THEME, RESOURCES } from '@src/js/constants';
+import { STATUS, RESULT, DIFFICULTY, RESOURCES } from '@src/js/constants';
 import { randomNumber } from './helpers';
 import CellKey from './cell-key';
 import CellState from './cell-state';
@@ -39,17 +39,17 @@ class GameState extends EventTarget {
       targetKey: null,
       cellKeys: [],
     };
-    this.theme = THEME.LIGHT;
+    // this.theme = THEME.LIGHT;
   }
 
-  get theme() {
-    return this._theme;
-  }
+  // get theme() {
+  //   return this._theme;
+  // }
 
-  set theme(value) {
-    this._theme = value;
-    this.dispatchEvent(new CustomEvent('themeChange'));
-  }
+  // set theme(value) {
+  //   this._theme = value;
+  //   this.dispatchEvent(new CustomEvent('themeChange'));
+  // }
 
   get numOfMines() {
     return this._numOfMines;
@@ -272,6 +272,14 @@ class GameState extends EventTarget {
   generateState = (cellKey) => {
     this._generateMines(cellKey);
     this._generateNumbers();
+  };
+
+  handleDifficultyChange = ({ difficultyKey, numOfMines }) => {
+    const isChanged = difficultyKey !== this.difficultyKey || numOfMines !== this.numOfMines;
+    if (isChanged) {
+      this.reset(difficultyKey, numOfMines);
+    }
+    return isChanged;
   };
 
   reset = (newDifficulty = this.difficultyKey, numOfMines = this.numOfMines) => {

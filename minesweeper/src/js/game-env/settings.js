@@ -1,83 +1,111 @@
-import gameState from '../game-state';
 import difficulty from '../difficulty';
-import { THEME } from '../constants';
+import { DIFFICULTY, THEME } from '../constants';
 import LocalStorage from '../local-store';
-import * as volume from './volume';
+import Volume from './volume';
 
-const STORAGE_KEY = 'minesweeper/theme';
+class Settings extends EventTarget {
+  constructor() {
+    super();
+    this.storage = new LocalStorage(Settings.STORAGE_KEY);
+    const stored = this.storage.get() || {};
 
-let callbacks = null;
-let form = null;
-let minesInput = null;
-let difficultySelect = null;
-let themeSelect = null;
+    const difficultyKey = stored.difficultyKey || DIFFICULTY.EASY;
 
-let currentDifficulty = null;
-let numOfMines = null;
-
-const themeStorage = new LocalStorage(STORAGE_KEY);
-let theme = themeStorage.get() || THEME.LIGHT;
-
-const changeTheme = (theme) => {
-  gameState.theme = theme;
-  document.querySelector('[data-theme]').dataset.theme = theme;
-};
-
-changeTheme(theme);
-
-const handleThemeChange = (e) => {
-  console.log('handleThemeChange', e.target.value);
-  theme = e.target.value;
-  changeTheme(theme);
-  themeStorage.set(theme);
-};
-
-const handleDifficultyChange = (e) => {
-  const { value } = e.target;
-  if (value !== currentDifficulty) {
-    currentDifficulty = value;
-    const defaultMines = difficulty[value].mines;
-    minesInput.value = defaultMines;
-  }
-};
-
-const handleFormSubmit = (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.currentTarget);
-  numOfMines = Number(formData.get('mines'));
-  theme = formData.get('theme');
-
-  if (currentDifficulty !== gameState.difficultyKey || gameState.numOfMines !== numOfMines) {
-    gameState.reset(currentDifficulty, numOfMines);
-    callbacks.onDifficultyChange();
+    this.values = {
+      volume: stored.volume || 0.3,
+      theme: stored.theme || THEME.LIGHT,
+      difficultyKey: difficultyKey,
+      numOfMines: stored.numOfMines || difficulty[difficultyKey].mines,
+    };
   }
 
-  callbacks.onSubmit();
-};
+  init() {
+    const { volume, theme, difficultyKey, numOfMines } = this.values;
+    this.volumeEl = new Volume(volume);
+    this.volumeEl.addEventListener('volumeChange', this.handleVolumeChange);
 
-export const initSettings = (args) => {
-  callbacks = args;
+    this.difficultySelect = document.querySelector('select[name="difficulty"]');
+    this.difficultySelect.value = difficultyKey;
+    this.difficultySelect.addEventListener('change', this.handleDifficultyChange);
 
-  difficultySelect = document.querySelector('select[name="difficulty"]');
-  difficultySelect.addEventListener('change', handleDifficultyChange);
+    this.themeSelect = document.querySelector('select[name="theme"]');
+    this.themeSelect.value = theme;
+    this.themeSelect.addEventListener('change', this.handleThemeChange);
 
-  themeSelect = document.querySelector('select[name="theme"]');
-  themeSelect.addEventListener('change', handleThemeChange);
+    this.minesInput = document.querySelector('.mines-input input[type="number"]');
+    this.minesInput.value = numOfMines;
 
-  minesInput = document.querySelector('.mines-input input[type="number"]');
+    this.form = document.querySelector('.settings__form');
+    this.form.addEventListener('submit', this.handleFormSubmit);
 
-  form = document.querySelector('.settings__form');
-  form.addEventListener('submit', handleFormSubmit);
+    this.changeTheme();
+    this.dispatchEvent(
+      new CustomEvent('difficultyChange', { detail: { difficultyKey, numOfMines } })
+    );
+  }
 
-  applySettings();
-  volume.init();
-};
+  get difficultyKey() {
+    return this._values.difficultyKey;
+  }
 
-export const applySettings = () => {
-  currentDifficulty = gameState.difficultyKey;
-  numOfMines = gameState.numOfMines;
+  get theme() {
+    return this._values.theme;
+  }
 
-  difficultySelect.value = currentDifficulty;
-  themeSelect.value = theme;
-  minesInput.value = numOfMines;
-};
+  get volume() {
+    return this._values.volume;
+  }
+
+  get values() {
+    return this._values;
+  }
+
+  set values(newValues) {
+    this._values = { ...this._values, ...newValues };
+    this.saveToStorage();
+  }
+
+  handleVolumeChange = (e) => {
+    this.values = { volume: e.detail.volume };
+  };
+
+  saveToStorage() {
+    this.storage.set(this.values);
+  }
+
+  changeTheme = () => {
+    const { theme } = this.values;
+    document.querySelector('[data-theme]').dataset.theme = theme;
+    this.dispatchEvent(new CustomEvent('themeChange', { detail: { theme } }));
+  };
+
+  handleThemeChange = (e) => {
+    this.values = { theme: e.target.value };
+    this.changeTheme();
+  };
+
+  handleDifficultyChange = (e) => {
+    const { value } = e.target;
+    if (value !== this.values.difficultyKey) {
+      const defaultMines = difficulty[value].mines;
+      this.values = { difficultyKey: value, numOfMines: defaultMines };
+      this.minesInput.value = defaultMines;
+    }
+  };
+
+  handleFormSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    this.values = { numOfMines: Number(formData.get('mines')) };
+
+    const { numOfMines, difficultyKey } = this.values;
+
+    this.dispatchEvent(
+      new CustomEvent('difficultyChange', { detail: { difficultyKey, numOfMines } })
+    );
+  };
+}
+
+Settings.STORAGE_KEY = 'minesweeper/settings';
+
+export const settings = new Settings();

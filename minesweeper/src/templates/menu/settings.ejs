@@ -5,30 +5,6 @@
 
     <div class="settings__row">
       <div class="settings__title">
-        Difficulty
-      </div>
-      <div class="settings__input">
-        <select name="difficulty" id="difficulty">
-          <option value="easy">easy</option>
-          <option value="medium">medium</option>
-          <option value="expert">expert</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="settings__row">
-      <div class="settings__title">
-        Number of mines
-      </div>
-      <div class="settings__input">
-        <div class="mines-input">
-          <input class="mines-input__number" type="number" name="mines" id="mines" min="10" max="99">
-        </div>
-      </div>
-    </div>
-
-    <div class="settings__row">
-      <div class="settings__title">
         Theme
       </div>
       <div class="settings__input">
@@ -52,7 +28,34 @@
         </div>
       </div>
     </div>
+    
+    <div class="settings__delimiter"></div>
+
+    <div class="settings__row">
+      <div class="settings__title">
+        Difficulty
+      </div>
+      <div class="settings__input">
+        <select name="difficulty" id="difficulty">
+          <option value="easy">easy</option>
+          <option value="medium">medium</option>
+          <option value="expert">expert</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__title">
+        Number of mines
+      </div>
+      <div class="settings__input">
+        <div class="mines-input">
+          <input class="mines-input__number" type="number" name="mines" id="mines" min="10" max="99">
+        </div>
+      </div>
+    </div>
 
     <button class="button settings__button" type="submit">Apply</button>
+    
   </form>
 </div>

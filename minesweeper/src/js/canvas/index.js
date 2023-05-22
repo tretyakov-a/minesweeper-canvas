@@ -12,6 +12,7 @@ import {
 import { STATUS } from '../constants';
 import CachedGameObject from './core/cached-game-object';
 import { applyBg } from './core/utils';
+import { settings } from '../game-env/settings';
 
 export default class GameCanvas extends CachedGameObject {
   constructor(container) {
@@ -34,7 +35,7 @@ export default class GameCanvas extends CachedGameObject {
     canvas.addEventListener('mouseleave', this.handleCanvasMouseLeave);
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     gameState.addEventListener('statusChange', this.handleGameStatusChange);
-    gameState.addEventListener('themeChange', this.onChange);
+    settings.addEventListener('themeChange', this.onChange);
     this.gameLoop();
   }
 
@@ -61,7 +62,7 @@ export default class GameCanvas extends CachedGameObject {
 
   destroy() {
     gameState.removeEventListener('statusChange', this.handleGameStatusChange);
-    gameState.removeEventListener('themeChange', this.onChange);
+    settings.removeEventListener('themeChange', this.onChange);
     super.destroy();
   }
 

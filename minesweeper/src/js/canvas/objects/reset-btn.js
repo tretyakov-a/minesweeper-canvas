@@ -1,10 +1,10 @@
 import config from '@src/js/config';
 import gameState from '@src/js/game-state';
-import { RESOURCES, STATUS } from '@src/js/constants';
+import { RESOURCES, RESULT } from '@src/js/constants';
+import { settings } from '@src/js/game-env/settings';
 import ImageObject from './image-object';
-import theme from '../../theme';
+import theme from '@src/js/theme';
 import CachedGameObject from '../core/cached-game-object';
-import { RESULT } from '@src/js/constants';
 import { applyBg } from '../core/utils';
 
 export default class ResetBtn extends CachedGameObject {
@@ -55,7 +55,7 @@ export default class ResetBtn extends CachedGameObject {
     this.drawCached(ctx, (cacheCtx) => {
       applyBg.call(this, cacheCtx);
       if (!this.isHovered) return;
-      cacheCtx.fillStyle = theme[gameState.theme].highlightMediumColor;
+      cacheCtx.fillStyle = theme[settings.theme].highlightMediumColor;
       cacheCtx.fillRect(0, 0, this.width, this.height);
     });
   }

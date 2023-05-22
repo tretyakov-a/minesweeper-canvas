@@ -1,7 +1,7 @@
 import WebFont from 'webfontloader';
 import { THEME, RESOURCES } from './constants';
-import gameState from './game-state';
-import * as volume from './game-env/volume';
+import { settings } from './game-env/settings';
+import { loadSound, loadImage } from './helpers';
 
 class Resources {
   constructor() {
@@ -14,7 +14,7 @@ class Resources {
   }
 
   getImage(key) {
-    const themedKey = `${key}/${gameState.theme}`;
+    const themedKey = `${key}/${settings.theme}`;
     const hasThemedKey = this.images.has(themedKey);
     return this.images.get(hasThemedKey ? themedKey : key);
   }
@@ -29,7 +29,7 @@ class Resources {
 
   playSound(key) {
     const sound = new Audio(this.getSound(key).src);
-    sound.volume = volume.value;
+    sound.volume = settings.volume;
     sound.play();
   }
 
@@ -84,19 +84,4 @@ resources.addSound(RESOURCES.SOUND.CHORD, 'chord.mp3');
 resources.addSound(RESOURCES.SOUND.BOOM, 'boom.mp3');
 resources.addSound(RESOURCES.SOUND.WIN, 'win.mp3');
 resources.addSound(RESOURCES.SOUND.LOSS, 'loss.mp3');
-resources.addSound(RESOURCES.SOUND.FLAG, 'flag.mp3');
-
-const loadSound = (soundSrc) =>
-  new Promise((resolve, reject) => {
-    const sound = new Audio(soundSrc);
-    sound.oncanplaythrough = () => resolve(sound);
-    sound.onerror = (err) => reject(err);
-  });
-
-const loadImage = (imageSrc) =>
-  new Promise((resolve, reject) => {
-    const img = new Image();
-    img.src = imageSrc;
-    img.onload = () => resolve(img);
-    img.onerror = (err) => reject(err);
-  });
+resources.addSound(RESOURCES.SOUND.FLAG, 'flag2.mp3');

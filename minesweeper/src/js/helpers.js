@@ -37,4 +37,19 @@ const getRandomStat = () => ({
   },
 });
 
+export const loadSound = (soundSrc) =>
+  new Promise((resolve, reject) => {
+    const sound = new Audio(soundSrc);
+    sound.oncanplaythrough = () => resolve(sound);
+    sound.onerror = (err) => reject(err);
+  });
+
+export const loadImage = (imageSrc) =>
+  new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = imageSrc;
+    img.onload = () => resolve(img);
+    img.onerror = (err) => reject(err);
+  });
+
 export { randomNumber, renderNumber, isClickOutside, renderTime, getRandomStat };

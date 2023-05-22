@@ -81,7 +81,7 @@ const initMenu = (args) => {
 };
 
 const hideMenu = () => {
-  if (modal) modal.hide();
+  if (modal && isMenuOpened) modal.hide();
 };
 
 export { initMenu, hideMenu, adjustMenuHeight };

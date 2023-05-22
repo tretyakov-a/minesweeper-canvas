@@ -1,89 +1,101 @@
-let containerEl;
-let barEl;
-let thumbEl;
-let volumeBtnEl;
-let mouseMoveHandler;
-let isThumbDragged = false;
+export default class Volume extends EventTarget {
+  constructor(value) {
+    super();
+    this.className = 'volume';
 
-const className = 'volume';
-let value = 0.3;
-let thumbCenterOffsetX = null;
+    this.thumbWidth = 16;
+    this.mouseMoveHandler = null;
+    this.isThumbDragged = false;
+    this.containerEl = document.querySelector(`.${this.className}__bar-container`);
+    this.barEl = document.querySelector(`.${this.className}__bar`);
+    this.thumbEl = document.querySelector(`.${this.className}__thumb`);
 
-const onVolumeChange = (newValue) => {
-  value = newValue;
-  const width = value * 100;
-  const thumbWidth = thumbEl.getBoundingClientRect().width;
+    this.thumbEl.addEventListener('mousedown', this.handleThumbMouseDown);
+    this.thumbEl.addEventListener('touchstart', this.handleThumbMouseDown);
+    this.containerEl.addEventListener('click', this.handleClick);
 
-  barEl.style.width = `${width}%`;
-  thumbEl.style.left = `calc(${width}% - ${thumbWidth / 2}px)`;
-  containerEl.setAttribute('title', `Volume ${Math.trunc(width)}%`);
-};
-
-const handleClick = (e) => {
-  if (e.target.classList.contains(`${className}__thumb`)) return;
-  const rect = e.currentTarget.getBoundingClientRect();
-  const x = e.type === 'touchmove' ? e.touches[0].pageX : e.pageX;
-  if (x < rect.left || x > rect.right) {
-    return;
+    this.thumbCenterOffsetX = 0;
+    this.value = value;
   }
 
-  const xInside = e.pageX - rect.x - thumbCenterOffsetX;
-  onVolumeChange(xInside / rect.width);
-};
-
-const handleMouseMove = (bounds) => (e) => {
-  const x = (e.type === 'touchmove' ? e.touches[0].pageX : e.pageX) - thumbCenterOffsetX;
-  if (x < bounds.left || x > bounds.right) {
-    return;
+  get value() {
+    return this._value;
   }
 
-  const xInside = x - bounds.left;
-  onVolumeChange(xInside / bounds.width);
-};
+  set value(newValue) {
+    this._value = newValue;
+    const width = this.value * 100;
 
-const handleMouseUp = (e) => {
-  if (e.type === 'touchend') {
-    document.removeEventListener('touchmove', mouseMoveHandler);
-    document.removeEventListener('touchend', handleMouseUp);
-  } else {
-    document.removeEventListener('mousemove', mouseMoveHandler);
-    document.removeEventListener('mouseup', handleMouseUp);
+    this.barEl.style.width = `${width}%`;
+    this.thumbEl.style.left = `calc(${width}% - ${this.thumbWidth / 2}px)`;
+    this.containerEl.setAttribute('title', `Volume ${Math.trunc(width)}%`);
   }
 
-  isThumbDragged = false;
-  thumbEl.classList.remove('dragged');
-};
+  // onVolumeChange = (newValue) => {
+  //   this.value = newValue;
+  //   const width = this.value * 100;
+  //   const thumbWidth = this.thumbEl.getBoundingClientRect().width;
 
-const handleThumbMouseDown = (e) => {
-  e.preventDefault();
-  if (isThumbDragged) return;
-  isThumbDragged = true;
+  //   this.barEl.style.width = `${width}%`;
+  //   this.thumbEl.style.left = `calc(${width}% - ${thumbWidth / 2}px)`;
+  //   this.containerEl.setAttribute('title', `Volume ${Math.trunc(width)}%`);
+  // };
 
-  thumbCenterOffsetX = e.offsetX - thumbEl.getBoundingClientRect().width / 2;
+  handleClick = (e) => {
+    if (e.target.classList.contains(`${this.className}__thumb`)) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.type === 'touchmove' ? e.touches[0].pageX : e.pageX;
+    if (x < rect.left || x > rect.right) {
+      return;
+    }
 
-  const { x, right, width } = containerEl.getBoundingClientRect();
-  mouseMoveHandler = handleMouseMove({ left: x, right, width });
+    const xInside = e.pageX - rect.x - this.thumbCenterOffsetX;
+    this.value = xInside / rect.width;
+    this.dispatchEvent(new CustomEvent('volumeChange', { detail: { volume: this.value } }));
+  };
 
-  if (e.type === 'touchstart') {
-    document.addEventListener('touchmove', mouseMoveHandler);
-    document.addEventListener('touchend', handleMouseUp);
-  } else {
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', handleMouseUp);
-  }
+  handleMouseMove = (bounds) => (e) => {
+    const x = (e.type === 'touchmove' ? e.touches[0].pageX : e.pageX) - this.thumbCenterOffsetX;
+    if (x < bounds.left || x > bounds.right) {
+      return;
+    }
 
-  thumbEl.classList.add('dragged');
-};
+    const xInside = x - bounds.left;
+    this.value = xInside / bounds.width;
+  };
 
-const init = () => {
-  containerEl = document.querySelector(`.${className}__bar-container`);
-  barEl = document.querySelector(`.${className}__bar`);
-  thumbEl = document.querySelector(`.${className}__thumb`);
-  volumeBtnEl = document.querySelector('[data-action="mute"]');
+  handleMouseUp = (e) => {
+    if (e.type === 'touchend') {
+      document.removeEventListener('touchmove', this.mouseMoveHandler);
+      document.removeEventListener('touchend', this.handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', this.mouseMoveHandler);
+      document.removeEventListener('mouseup', this.handleMouseUp);
+    }
 
-  thumbEl.addEventListener('mousedown', handleThumbMouseDown);
-  thumbEl.addEventListener('touchstart', handleThumbMouseDown);
-  containerEl.addEventListener('click', handleClick);
-};
+    this.isThumbDragged = false;
+    this.thumbEl.classList.remove('dragged');
+    this.dispatchEvent(new CustomEvent('volumeChange', { detail: { volume: this.value } }));
+  };
 
-export { init, value };
+  handleThumbMouseDown = (e) => {
+    e.preventDefault();
+    if (this.isThumbDragged) return;
+    this.isThumbDragged = true;
+
+    this.thumbCenterOffsetX = e.offsetX - this.thumbWidth / 2;
+
+    const { x, right, width } = this.containerEl.getBoundingClientRect();
+    this.mouseMoveHandler = this.handleMouseMove({ left: x, right, width });
+
+    if (e.type === 'touchstart') {
+      document.addEventListener('touchmove', this.mouseMoveHandler);
+      document.addEventListener('touchend', this.handleMouseUp);
+    } else {
+      document.addEventListener('mousemove', this.mouseMoveHandler);
+      document.addEventListener('mouseup', this.handleMouseUp);
+    }
+
+    this.thumbEl.classList.add('dragged');
+  };
+}
