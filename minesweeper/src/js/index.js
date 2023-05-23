@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setTimeout(() => {
       resources.playSound(gameOverSound);
       showResults(gameResult);
-      if (!gameState.isCustom) addStats({ ...gameResult, date });
+      if (!gameState.isCustom) addStats({ ...gameResult, clicks: { ...gameResult.clicks }, date });
     }, config.gameOverModalDelay);
   });
 
