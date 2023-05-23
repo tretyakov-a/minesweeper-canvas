@@ -1,3 +1,3 @@
 # Minesweeper
 
-[Deploy](https://github.com/tretyakov-a/minesweeper-canvas)
+[Deploy](https://tretyakov-a.github.io/minesweeper-canvas/)
