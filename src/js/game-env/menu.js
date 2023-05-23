@@ -47,10 +47,12 @@ const switchTab = (tabKey) => {
 
 const closeTabs = () => {
   Object.keys(tabs).forEach((tabKey) => {
+    menuWindow.style.overflow = 'hidden';
     if (tabs[tabKey].classList.contains('show')) {
       tabs[tabKey].classList.remove('show');
       tabs[tabKey].classList.add('hide');
       setTimeout(() => {
+        menuWindow.style.overflow = 'auto';
         tabs[tabKey].classList.remove('hide');
       }, modal.transition);
     }
